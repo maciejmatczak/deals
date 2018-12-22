@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import ScrapingTask, Product
+
+admin.site.register(ScrapingTask)
+admin.site.register(Product)
