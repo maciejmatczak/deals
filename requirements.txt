@@ -1,0 +1,5 @@
+ansible
+django
+django-crispy-forms
+gunicorn
+python-dotenv

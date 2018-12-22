@@ -1,0 +1,4 @@
+certbot_script: "/home/{{ ansible_ssh_user }}/certbot-auto"
+certbot_admin_email: ""
+certbot_domain_list:
+  - ""

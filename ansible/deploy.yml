@@ -1,0 +1,23 @@
+- hosts: ubuntu-droplet
+  remote_user: ellox
+  vars:
+    app_name: "{{ playbook_dir | dirname | basename }}"
+    ansistrano_deploy_from: "{{ playbook_dir | dirname }}/"
+    ansistrano_deploy_to: "/home/{{ ansible_ssh_user  }}/deployed2/{{ app_name }}/"
+    ansistrano_shared_files:
+      - ".env"
+    ansistrano_shared_paths:
+      - "venv"
+      - "static"
+    ansistrano_keep_releases: 5
+    ansistrano_deploy_via: rsync
+    ansistrano_rsync_extra_params:
+      - "--exclude=venv"
+      - "--exclude=.mypy_cache"
+      - "--exclude=.vscode"
+      - "--exclude=__pycache__"
+      - "--exclude=db.sqlite3"
+  roles:
+    - checksudo
+    - ansistrano.deploy
+    - web

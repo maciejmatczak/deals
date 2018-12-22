@@ -1,0 +1,23 @@
+- name: Download certbot
+  get_url:
+    url: "https://dl.eff.org/certbot-auto"
+    dest: "{{ certbot_script }}"
+    mode: 0755
+
+- name: Install certbot and generate cert
+  become: yes
+  command: >
+    {{ certbot_script }} certonly --standalone --noninteractive --agree-tos
+    --email {{ certbot_admin_email }} --domains {{ certbot_domain_list | join(',') }}
+    --pre-hook 'service nginx stop' --post-hook 'service nginx start'
+  args:
+    creates: "/etc/letsencrypt/live/{{ certbot_domain_list | first }}"
+
+- name: Ensure a cron job to auto-renew the cert exists
+  cron:
+    name: "daily auto renew cert"
+    special_time: daily
+    job: >
+      {{ certbot_script }} renew --standalone --no-self-upgrade --quiet
+      --pre-hook 'service nginx stop' --post-hook 'service nginx start'
+    state: present

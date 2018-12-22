@@ -1,0 +1,4 @@
+- name: Check sudo password
+  command: echo "sudo password correct"
+  become: yes
+  changed_when: false

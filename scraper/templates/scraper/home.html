@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="row">
+  <div class="card-deck">
+    {% for deal in deals %}
+      <div class="card mb-4" style="min-width: 12rem; max-width: 12rem">
+        <img class="card-img-top" src="{% static 'generic.jpg' %}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">{{ deal.title }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{ deal.date_found }}</h6>
+          <p class="card-text">
+            Only for {{ deal.price }}!
+          </p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  </div>
+{% endblock content %}
