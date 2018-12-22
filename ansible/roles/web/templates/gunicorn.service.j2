@@ -6,7 +6,9 @@ After=network.target
 User={{ansible_ssh_user}}
 Group={{ansible_ssh_user}}
 WorkingDirectory={{ ansistrano_release_path.stdout }}
-ExecStart={{ ansistrano_release_path.stdout }}/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/{{ app_name }}/gunicorn.sock {{app_name}}.wsgi
+ExecStart={{ ansistrano_release_path.stdout }}/venv/bin/gunicorn \
+    --access-logfile - --workers 3 --bind unix:/run/{{ app_name }}/gunicorn.sock \
+    {{app_name}}.wsgi
 
 [Install]
 WantedBy=multi-user.target
