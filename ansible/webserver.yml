@@ -1,7 +1,7 @@
-- hosts: ubuntu-droplet
-  remote_user: ellox
+- hosts: webserver
+  remote_user: "{{ remote_user }}"
   vars:
-    app_name: deals
+    app_name: "{{ playbook_dir | dirname | basename }}"
     domain_list:
       - "deals.ellox.science"
       - "www.deals.ellox.science"

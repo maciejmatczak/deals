@@ -1,9 +1,9 @@
-- hosts: ubuntu-droplet
-  remote_user: ellox
+- hosts: webserver
+  remote_user: "{{ remote_user }}"
   vars:
     app_name: "{{ playbook_dir | dirname | basename }}"
     ansistrano_deploy_from: "{{ playbook_dir | dirname }}/"
-    ansistrano_deploy_to: "/home/{{ ansible_ssh_user  }}/deployed2/{{ app_name }}/"
+    ansistrano_deploy_to: "/home/{{ ansible_ssh_user  }}/deployed/{{ app_name }}/"
     ansistrano_shared_files:
       - ".env"
     ansistrano_shared_paths:
@@ -20,4 +20,4 @@
   roles:
     - checksudo
     - ansistrano.deploy
-    - web
+    - django_app
