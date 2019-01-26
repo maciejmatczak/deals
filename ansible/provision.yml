@@ -1,0 +1,12 @@
+- hosts: webserver
+  remote_user: "{{ remote_user }}"
+  vars:
+    provision_public_keys:
+      - ~/.ssh/id_rsa.pub
+    provision_packages:
+      - ufw
+      - unattended-upgrades
+      - logwatch
+  roles:
+    - checksudo
+    - provision

@@ -1,0 +1,71 @@
+- name: Create a deploy user
+  become: yes
+  user:
+    name: deploy
+    groups: sudo
+    state: present
+    shell: /bin/bash
+
+- name: Set authorized key taken from file
+  become: yes
+  authorized_key:
+    user: deploy
+    state: present
+    key: "{{ lookup('file', item) }}"
+  with_items: "{{ provision_public_keys }}"
+
+- name: Disallow password authentication
+  become: yes
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^PasswordAuthentication"
+    line: "PasswordAuthentication no"
+    state: present
+  notify: Restart ssh
+
+- name: Disallow root SSH access
+  become: yes
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin no"
+    state: present
+  notify: Restart ssh
+
+- name: Update APT package cache
+  become: yes
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Update server
+  become: yes
+  apt:
+    upgrade: safe
+
+- name: Install packages
+  become: yes
+  apt:
+    pkg: "{{ provision_packages }}"
+    state: present
+
+- name: Setup unattended upgrades
+  become: yes
+  copy:
+    src: "{{ item }}"
+    dest: /etc/apt/apt.conf.d/
+  with_items:
+    - 10periodic
+    - 50unattended-upgrades
+
+- name: Setup ufw
+  become: yes
+  ufw:
+    state: enabled
+    policy: deny
+
+- name: ufw - ssh
+  become: yes
+  ufw:
+    rule: allow
+    name: OpenSSH
