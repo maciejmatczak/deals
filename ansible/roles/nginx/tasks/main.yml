@@ -25,3 +25,9 @@
     name: nginx
     enabled: yes
     state: reloaded
+
+- name: ufw - allow nginx
+  become: yes
+  ufw:
+    rule: allow
+    name: OpenSSH
