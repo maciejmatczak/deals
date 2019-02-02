@@ -4,8 +4,10 @@
     app_name: "{{ playbook_dir | dirname | basename }}"
     ansistrano_deploy_from: "{{ playbook_dir | dirname }}/"
     ansistrano_deploy_to: "/home/{{ ansible_ssh_user  }}/deployed/{{ app_name }}/"
+    ansistrano_before_symlink_shared_tasks_file: "{{ playbook_dir }}/tasks/touch_before_symlink.yml"
     ansistrano_shared_files:
       - ".env"
+      - "db.sqlite3"
     ansistrano_shared_paths:
       - "venv"
       - "static"
