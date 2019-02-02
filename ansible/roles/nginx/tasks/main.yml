@@ -1,3 +1,10 @@
+- name: Generate Diffie-Hellman parameters
+  become: yes
+  command: >
+    openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  args:
+    creates: "/etc/ssl/certs/dhparam.pem"
+
 - name: Install nginx
   become: yes
   apt:
