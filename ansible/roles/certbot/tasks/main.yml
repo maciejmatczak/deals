@@ -4,6 +4,16 @@
     dest: "{{ certbot_script }}"
     mode: 0755
 
+- name: ufw - allow certbot connections
+  become: yes
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  with_items:
+    - 80
+    - 443
+
 - name: Install certbot and generate cert
   become: yes
   command: >
