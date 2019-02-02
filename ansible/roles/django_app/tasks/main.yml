@@ -1,5 +1,6 @@
 - name: Install requirements.txt
   pip:
+    virtualenv_python: python3
     virtualenv: "{{ ansistrano_release_path.stdout }}/venv"
     requirements: "{{ ansistrano_release_path.stdout }}/requirements.txt"
 
