@@ -6,6 +6,13 @@
     state: present
     shell: /bin/bash
 
+- name: Add sudoers.d setup for a deploy user
+  become: yes
+  template:
+    src: deploy.j2
+    dest: /etc/sudoers.d/deploy
+    mode: 0644
+
 - name: Set authorized key taken from file
   become: yes
   authorized_key:
@@ -57,15 +64,36 @@
   with_items:
     - 10periodic
     - 50unattended-upgrades
+  when: "'unattended-upgrades' in provision_packages"
 
 - name: Setup ufw
   become: yes
   ufw:
     state: enabled
     policy: deny
+  when: "'ufw' in provision_packages"
 
 - name: ufw - ssh
   become: yes
   ufw:
     rule: allow
     name: OpenSSH
+  when: "'ufw' in provision_packages"
+
+- name: Setup logwatch config
+  become: yes
+  copy:
+    src: "logwatch.conf"
+    dest: /etc/logwatch/conf/logwatch.conf
+  when: "'logwatch' in provision_packages"
+
+- name: stat logwatch daily cron
+  stat:
+    path: /etc/cron.daily/00logwatch
+  register: logwatch_cron_daily
+
+- name: Change logwatch to weekly
+  become: yes
+  command: mv /etc/cron.daily/00logwatch /etc/cron.weekly/00logwatch
+  when: logwatch_cron_daily.stat.exists
+

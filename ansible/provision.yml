@@ -1,6 +1,8 @@
 - hosts: webserver
   remote_user: "{{ remote_user }}"
   vars:
+    provision_nopasswd_commands:
+      - "/home/{{ ansible_ssh_user }}/certbot-auto"
     provision_public_keys:
       - ~/.ssh/id_rsa.pub
     provision_packages:
