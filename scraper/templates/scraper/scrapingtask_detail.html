@@ -6,27 +6,27 @@
       <h5 class="entry-title mr-4">{{ object.url }}</h5>
 
       <div class="entry-metadata">
-        <small class="mr-2">
+        <span class="entry-metadata-element">
         Active: 
           {% if object.active %}
             <i class="fas fa-circle"></i>
           {% else %}
             <i class="far fa-circle"></i>
           {% endif %}
-        </small>
+        </span>
 
-        <small class="mr-2">
+        <span class="entry-metadata-element">
         Multiple: 
           {% if object.multiple %}
             <i class="fas fa-circle"></i>
           {% else %}
             <i class="far fa-circle"></i>
           {% endif %}
-        </small>
+        </span>
 
-        <small>
+        <span class="entry-metadata-element">
           Runs at: {{ object.running_time | time:"H:i:s" }} <i class="far fa-clock"></i>
-        </small>
+        </span>
       </div>
 
     </div>
@@ -38,6 +38,7 @@
     <div class="entry-content">
       <pre><code class="YAML">{{ object.task }}</code></pre>
     </div>
+
     {% if object.user == user %}
       <div class="mt-2">
         <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'scrapingtask-update' object.id %}">Update</a>
