@@ -1,13 +1,65 @@
 body {
-    background: #fafafa;
-    color: #333333;
-    margin-top: 5rem;
+  background: #eeeeee;
+  color: #333333;
+  margin-top: 5rem;
 }
 
 .content-section {
-    background: #ffffff;
-    padding: 10px 20px;
-    border: 1px solid #dddddd;
-    border-radius: 3px;
-    margin-bottom: 20px;
-  }
+  background: #ffffff;
+  padding: 0.8rem;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 0.8rem;
+}
+
+.entry-section {
+  background: #ffffff;
+  padding: 0.8rem;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 0.8rem;
+}
+
+.entry-header {
+  border-bottom: 1px solid #dddddd;
+  margin-bottom: 0.8rem;
+}
+
+.entry-title {
+  color: #444444;
+  padding: 0;
+  margin: 0;
+}
+
+.entry-title:hover {
+  color: #666666;
+}
+
+.entry-title a:hover,
+.entry-title a:link,
+.entry-title a:visited {
+  color: #666666;
+}
+
+.entry-metadata {
+  color: #666666;
+  padding: 0;
+  margin: 0;
+}
+
+.entry-metadata-element {
+  font-size: small;
+  margin-right: 1rem;
+}
+
+.entry-metadata-element i {
+  font-size: x-small;
+}
+
+.entry-content {
+  padding: 0;
+  margin: 0;
+}
+
+
+
