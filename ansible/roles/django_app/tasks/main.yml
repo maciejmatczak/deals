@@ -1,47 +1,38 @@
 - name: Install requirements.txt
   pip:
-    virtualenv_python: python3
-    virtualenv: "{{ ansistrano_release_path.stdout }}/venv"
-    requirements: "{{ ansistrano_release_path.stdout }}/requirements.txt"
+        virtualenv_python: python3
+        virtualenv: "{{ ansistrano_release_path.stdout }}/venv"
+        requirements: "{{ ansistrano_release_path.stdout }}/requirements.txt"
 
 - name: Django makemigrations
   django_manage:
-    app_path: "{{ ansistrano_release_path.stdout }}"
-    virtualenv: "{{ ansistrano_release_path.stdout }}/venv"
-    command: makemigrations
+        app_path: "{{ ansistrano_release_path.stdout }}"
+        virtualenv: "{{ ansistrano_release_path.stdout }}/venv"
+        command: makemigrations
 
 - name: Django migrate
   django_manage:
-    app_path: "{{ ansistrano_release_path.stdout }}"
-    virtualenv: "{{ ansistrano_release_path.stdout }}/venv"
-    command: migrate
+        app_path: "{{ ansistrano_release_path.stdout }}"
+        virtualenv: "{{ ansistrano_release_path.stdout }}/venv"
+        command: migrate
 
 - name: Django collectstatic
   django_manage:
-    app_path: "{{ ansistrano_release_path.stdout }}"
-    virtualenv: "{{ ansistrano_release_path.stdout }}/venv"
-    command: collectstatic
-
-- name: Gunicorn run directory exists
-  become: yes
-  file:
-    path: "/run/{{ app_name }}"
-    state: directory
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-    mode: 0755
+        app_path: "{{ ansistrano_release_path.stdout }}"
+        virtualenv: "{{ ansistrano_release_path.stdout }}/venv"
+        command: collectstatic
 
 - name: Setup Gunicorn systemd service
   become: yes
   template:
-    src: gunicorn.service.j2
-    dest: /lib/systemd/system/gunicorn.service
-    mode: 0644
+        src: gunicorn.service.j2
+        dest: /lib/systemd/system/gunicorn.service
+        mode: 0644
 
 - name: Restart Gunicorn systemd service
   become: yes
   systemd:
-    name: gunicorn.service
-    daemon_reload: yes
-    enabled: yes
-    state: restarted
+        name: gunicorn.service
+        daemon_reload: yes
+        enabled: yes
+        state: restarted
