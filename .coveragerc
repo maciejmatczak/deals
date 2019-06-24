@@ -1,0 +1,15 @@
+[run]
+omit = 
+    conftest.py
+    manage.py
+    */wsgi.py
+    venv/*
+    test*py
+    *tests/*
+    */settings/*
+    */migrations/*
+branch = True
+
+[report]
+show_missing = True
+skip_covered = True
