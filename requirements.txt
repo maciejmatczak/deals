@@ -1,8 +1,9 @@
 ansible
+cssselect
 django
 django-crispy-forms
 gunicorn
-python-dotenv
-selenium
 lxml
-cssselect
+python-dotenv
+pyyaml
+selenium
