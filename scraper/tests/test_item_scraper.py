@@ -1,8 +1,8 @@
 from pytest import raises
 from pathlib import Path
 
-from scraper.product_scraper.product_scraper import parse
-from scraper.product_scraper.validators import (
+from scraper.item_scraper.item_scraper import parse
+from scraper.item_scraper.validators import (
     ValidationError,
     validate_css_selector,
     validate_file_path,

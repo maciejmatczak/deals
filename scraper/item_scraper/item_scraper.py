@@ -1,7 +1,6 @@
 from lxml import html
 from io import StringIO
 import re
-from pathlib import Path
 
 from .page_downloader import download_page
 from .validators import validate_task, validate_file_path
