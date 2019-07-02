@@ -1,16 +1,27 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.urls import reverse
+import yaml
 
 
 User = get_user_model()
+
+
+def validate_yaml(value):
+    try:
+        yaml.safe_load(value)
+    except yaml.YAMLError as exception:
+        raise ValidationError('Field is not a proper yaml: %(exception)s',
+                              params={'exception': exception}
+                              )
 
 
 class ScrapingTask(models.Model):
     url = models.URLField(max_length=600, blank=False)
     active = models.BooleanField(default=True, blank=False)
     multiple = models.BooleanField(default=False, blank=False)
-    task = models.TextField(blank=False)
+    task = models.TextField(blank=False, validators=[validate_yaml])
     description = models.TextField(blank=True)
     running_time = models.TimeField(blank=False)
 
@@ -34,3 +45,8 @@ class Product(models.Model):
 
     scraping_task = models.ForeignKey(ScrapingTask, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Item(models.Model):
+    data = models.TextField(blank=False, validators=[validate_yaml])
+    scraping_task = models.ForeignKey(ScrapingTask, on_delete=models.SET_NULL, null=True)
