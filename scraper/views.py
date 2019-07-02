@@ -1,5 +1,7 @@
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import (
     ListView,
     DetailView,
@@ -7,6 +9,9 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+import yaml
+
+from .item_scraper import item_scraper
 from .models import ScrapingTask
 
 deals = [
@@ -41,6 +46,13 @@ def home(request):
         return render(request, 'scraper/home.html', context=context)
     else:
         return render(request, 'scraper/home_empty.html')
+
+
+def test_site(request):
+    context = {
+        'deals': deals
+    }
+    return render(request, 'scraper/test_site.html', context=context)
 
 
 class ScrapingTaskListView(LoginRequiredMixin, ListView):
@@ -104,3 +116,21 @@ class ScrapingTaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
             return True
         else:
             return False
+
+
+@login_required
+def scraping_task_test_run(request, pk):
+    scraping_task = get_object_or_404(ScrapingTask, pk=pk)
+    task = yaml.safe_load(scraping_task.task)
+
+    results, page_source = item_scraper.scrap(
+        url=scraping_task.url,
+        task=task,
+        chromedriver_path=settings.SCRAPER_CHROMEDRIVER_PATH
+    )
+
+    context = {
+        'scraping_task': scraping_task,
+        'results': [yaml.dump(r, default_flow_style=False) for r in results],
+    }
+    return render(request, 'scraper/scrapingtask_test_run.html', context=context)

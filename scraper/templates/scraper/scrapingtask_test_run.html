@@ -1,0 +1,14 @@
+{% extends 'scraper/base.html' %}
+
+{% block content %}
+  {% for result in results %}
+    <div class="entry-section">
+
+      <div class="entry-content">
+        <pre><code class="YAML">{{ result }}</code></pre>
+      </div>
+
+    </div>
+  {% endfor %}
+
+{% endblock content %}

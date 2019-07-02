@@ -23,7 +23,7 @@ def scrap(url, task, chromedriver_path, cache_dir=None, use_cache=False, endless
 
     data = parse(page_source, task)
 
-    return data
+    return data, page_source
 
 
 def parse(page_source, task):
