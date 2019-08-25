@@ -1,6 +1,8 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import (
     ListView,
@@ -12,11 +14,12 @@ from django.views.generic import (
 import yaml
 
 from .item_scraper import item_scraper
+from .item_scraper.validators import ValidationError as ScraptTaskValidationError
 from .models import ScrapingTask
 
 deals = [
     {
-        'title': 'Super TSHIRT',
+        'title': 'Szorty kąpielowe',
         'price': '19.99',
         'date_found': '2018-12-01'
     },
@@ -123,14 +126,22 @@ def scraping_task_test_run(request, pk):
     scraping_task = get_object_or_404(ScrapingTask, pk=pk)
     task = yaml.safe_load(scraping_task.task)
 
-    results, page_source = item_scraper.scrap(
-        url=scraping_task.url,
-        task=task,
-        chromedriver_path=settings.SCRAPER_CHROMEDRIVER_PATH
-    )
+    try:
+        results, page_source = item_scraper.scrap(
+            url=scraping_task.url,
+            task=task,
+            chromedriver_path=settings.SCRAPER_CHROMEDRIVER_PATH
+        )
+    except ScraptTaskValidationError as exception:
+        messages.warning(request, str(exception))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+    result_yamled = [
+        yaml.dump(r, default_flow_style=False, allow_unicode=True)
+        for r in results
+    ]
     context = {
         'scraping_task': scraping_task,
-        'results': [yaml.dump(r, default_flow_style=False) for r in results],
+        'results': result_yamled,
     }
     return render(request, 'scraper/scrapingtask_test_run.html', context=context)
