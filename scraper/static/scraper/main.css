@@ -4,6 +4,10 @@ body {
   margin-top: 5rem;
 }
 
+.alert {
+  border: 1px solid #dddddd;
+}
+
 .content-section {
   background: #ffffff;
   padding: 0.8rem;
