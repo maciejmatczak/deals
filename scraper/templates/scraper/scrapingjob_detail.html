@@ -41,9 +41,9 @@
 
     {% if object.user == user %}
       <div class="mt-2">
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'scrapingtask-update' object.id %}">Update</a>
-        <a class="btn btn-warning btn-sm mt-1 mb-1" href="{% url 'scrapingtask-testrun' object.id %}">Test</a>
-        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'scrapingtask-delete' object.id %}">Delete</a>
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'scrapingjob-update' object.id %}">Update</a>
+        <a class="btn btn-warning btn-sm mt-1 mb-1" href="{% url 'scrapingjob-testrun' object.id %}">Test</a>
+        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'scrapingjob-delete' object.id %}">Delete</a>
       </div>
     {% endif %}
   </div>

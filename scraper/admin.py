@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import ScrapingTask, Product, Item
+from .models import ScrapingJob, Product, Item
 
-admin.site.register(ScrapingTask)
+admin.site.register(ScrapingJob)
 admin.site.register(Product)
 admin.site.register(Item)

@@ -15,7 +15,7 @@ import yaml
 
 from .item_scraper import item_scraper
 from .item_scraper.validators import ValidationError as ScraptTaskValidationError
-from .models import ScrapingTask
+from .models import ScrapingJob
 
 deals = [
     {
@@ -58,19 +58,19 @@ def test_site(request):
     return render(request, 'scraper/test_site.html', context=context)
 
 
-class ScrapingTaskListView(LoginRequiredMixin, ListView):
-    model = ScrapingTask
+class ScrapingJobListView(LoginRequiredMixin, ListView):
+    model = ScrapingJob
     context_object_name = 'tasks'
     ordering = ['url']
     paginate_by = 10
 
 
-class ScrapingTaskDetailView(LoginRequiredMixin, DetailView):
-    model = ScrapingTask
+class ScrapingJobDetailView(LoginRequiredMixin, DetailView):
+    model = ScrapingJob
 
 
-class ScrapingTaskCreateView(LoginRequiredMixin, CreateView):
-    model = ScrapingTask
+class ScrapingJobCreateView(LoginRequiredMixin, CreateView):
+    model = ScrapingJob
     fields = [
         'url',
         'active',
@@ -84,8 +84,8 @@ class ScrapingTaskCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ScrapingTaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = ScrapingTask
+class ScrapingJobUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = ScrapingJob
     fields = [
         'url',
         'active',
@@ -100,35 +100,35 @@ class ScrapingTaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
         return super().form_valid(form)
 
     def test_func(self):
-        scraping_task = self.get_object()
+        scraping_job = self.get_object()
 
-        if self.request.user == scraping_task.user:
+        if self.request.user == scraping_job.user:
             return True
         else:
             return False
 
 
-class ScrapingTaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = ScrapingTask
+class ScrapingJobDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = ScrapingJob
     success_url = '/scraping-tasks/'
 
     def test_func(self):
-        scraping_task = self.get_object()
+        scraping_job = self.get_object()
 
-        if self.request.user == scraping_task.user:
+        if self.request.user == scraping_job.user:
             return True
         else:
             return False
 
 
 @login_required
-def scraping_task_test_run(request, pk):
-    scraping_task = get_object_or_404(ScrapingTask, pk=pk)
-    task = yaml.safe_load(scraping_task.task)
+def scraping_job_test_run(request, pk):
+    scraping_job = get_object_or_404(ScrapingJob, pk=pk)
+    task = yaml.safe_load(scraping_job.task)
 
     try:
         results, page_source = item_scraper.scrap(
-            url=scraping_task.url,
+            url=scraping_job.url,
             task=task,
             chromedriver_path=settings.SCRAPER_CHROMEDRIVER_PATH
         )
@@ -141,7 +141,7 @@ def scraping_task_test_run(request, pk):
         for r in results
     ]
     context = {
-        'scraping_task': scraping_task,
+        'scraping_job': scraping_job,
         'results': result_yamled,
     }
-    return render(request, 'scraper/scrapingtask_test_run.html', context=context)
+    return render(request, 'scraper/scrapingjob_test_run.html', context=context)
