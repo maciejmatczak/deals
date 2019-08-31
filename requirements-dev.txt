@@ -4,3 +4,4 @@ flake8
 rope
 pytest-watch
 pytest-cov
+pytest-dotenv
