@@ -1,0 +1,23 @@
+{% extends 'scraper/base.html' %}
+
+{% block content %}
+  <div class="entry-section">
+    <div class="entry-header">
+      <h5 class="entry-title mr-4">{{ object.title }}</h5>
+    </div>
+
+    <div class="entry-content">
+      <pre><code class="YAML">{{ object.task }}</code></pre>
+    </div>
+
+    {% if object.user == user %}
+      <div class="mt-2">
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'scrapingtask-update' object.id %}">Update</a>
+        <a class="btn btn-warning btn-sm mt-1 mb-1" href="{% url 'scrapingtask-testrun' object.id %}">Test</a>
+        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'scrapingtask-delete' object.id %}">Delete</a>
+      </div>
+    {% endif %}
+  </div>
+
+
+{% endblock content %}

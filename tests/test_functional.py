@@ -49,15 +49,18 @@ def test_standard_scenario(live_server, browser, user_factory,
     assert len(jobs_divs) == 2
 
     # but let's double check if detail view of the other one gives an error
-    browser.get(live_server.url + reverse('scrapingjob-detail', args=[job21.pk]))
+    browser.get(live_server.url +
+                reverse('scrapingjob-detail', args=[job21.pk]))
     assert '403' in browser.page_source
 
     # let's assume we just can find both task data within the detail
     # page
-    browser.get(live_server.url + reverse('scrapingjob-detail', args=[job11.pk]))
+    browser.get(live_server.url +
+                reverse('scrapingjob-detail', args=[job11.pk]))
     assert task11.task in browser.find_element_by_tag_name('body').text,\
         browser.find_element_by_tag_name('body').text
-    browser.get(live_server.url + reverse('scrapingjob-detail', args=[job12 .pk]))
+    browser.get(live_server.url +
+                reverse('scrapingjob-detail', args=[job12 .pk]))
     assert task12.task in browser.find_element_by_tag_name('body').text,\
         browser.find_element_by_tag_name('body').text
 
@@ -78,10 +81,35 @@ def test_standard_scenario(live_server, browser, user_factory,
 
     # and after all this change we and with following:
     # job11 still have task11
-    browser.get(live_server.url + reverse('scrapingjob-detail', args=[job11.pk]))
+    browser.get(live_server.url +
+                reverse('scrapingjob-detail', args=[job11.pk]))
     assert task11.task in browser.find_element_by_tag_name('body').text,\
         browser.find_element_by_tag_name('body').text
     # but job12 should have task11
-    browser.get(live_server.url + reverse('scrapingjob-detail', args=[job12.pk]))
+    browser.get(live_server.url +
+                reverse('scrapingjob-detail', args=[job12.pk]))
     assert task12.task not in browser.find_element_by_tag_name('body').text,\
         browser.find_element_by_tag_name('body').text
+
+
+@pytest.mark.django_db
+def test_working_with_tasks(live_server, browser, user_factory,
+                            scraping_job_factory, scraping_task_factory):
+    user1 = user_factory.create(password=make_password('1234'))
+
+    task1 = scraping_task_factory.create(user=user1)
+    task2 = scraping_task_factory.create(user=user1)
+
+    # Open the home page and log in as user1
+    browser.get(live_server.url)
+    browser.find_element_by_partial_link_text("jobs").click()
+    browser.find_element_by_name('username').send_keys(user1.username)
+    browser.find_element_by_name('password').send_keys('1234')
+    browser.find_element_by_css_selector("button[type='submit']").click()
+
+    browser.find_element_by_partial_link_text("tasks").click()
+    found_titles = {el.text for el in browser.find_elements_by_css_selector(
+        '.entry-title a')}
+    expected_titles = {t.title for t in (task1, task2)}
+
+    assert found_titles == expected_titles

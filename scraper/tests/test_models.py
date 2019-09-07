@@ -29,4 +29,4 @@ def test_scraping_jobs_for_user(user_factory, scraping_job_factory):
     scraping_job_factory.create(user=user)
     scraping_job_factory.create(user=user)
 
-    assert ScrapingJob.objects.filter(user=user).count() == 2, ScrapingJob.objects.all()
+    assert ScrapingJob.objects.filter(user=user).count() == 2, ScrapingJob.objects.count()
