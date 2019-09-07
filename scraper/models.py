@@ -28,6 +28,9 @@ class ScrapingTask(models.Model):
     def __str__(self):
         return self.title + ': ' + self.task
 
+    def get_absolute_url(self):
+        return reverse('scrapingtask-detail', kwargs={'pk': self.pk})
+
 
 class ScrapingJob(models.Model):
     url = models.URLField(max_length=600, blank=False)
@@ -36,7 +39,8 @@ class ScrapingJob(models.Model):
     description = models.TextField(blank=True)
     running_time = models.TimeField(blank=False)
 
-    scraping_task = models.ForeignKey(ScrapingTask, on_delete=models.SET_NULL, null=True)
+    scraping_task = models.ForeignKey(
+        ScrapingTask, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -55,10 +59,12 @@ class Product(models.Model):
     date_found = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True)
 
-    scraping_job = models.ForeignKey(ScrapingJob, on_delete=models.SET_NULL, null=True)
+    scraping_job = models.ForeignKey(
+        ScrapingJob, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Item(models.Model):
     data = models.TextField(blank=False, validators=[validate_yaml])
-    scraping_job = models.ForeignKey(ScrapingJob, on_delete=models.SET_NULL, null=True)
+    scraping_job = models.ForeignKey(
+        ScrapingJob, on_delete=models.SET_NULL, null=True)
