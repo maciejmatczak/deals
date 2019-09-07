@@ -17,14 +17,26 @@ def validate_yaml(value):
                               )
 
 
+class ScrapingTask(models.Model):
+    title = models.CharField(max_length=255, blank=False)
+    favourite = models.BooleanField(default=True, blank=False)
+
+    task = models.TextField(blank=False, validators=[validate_yaml])
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title + ': ' + self.task
+
+
 class ScrapingJob(models.Model):
     url = models.URLField(max_length=600, blank=False)
     active = models.BooleanField(default=True, blank=False)
     multiple = models.BooleanField(default=False, blank=False)
-    task = models.TextField(blank=False, validators=[validate_yaml])
     description = models.TextField(blank=True)
     running_time = models.TimeField(blank=False)
 
+    scraping_task = models.ForeignKey(ScrapingTask, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

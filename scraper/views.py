@@ -15,6 +15,7 @@ import yaml
 
 from .item_scraper import item_scraper
 from .item_scraper.validators import ValidationError as ScraptTaskValidationError
+from .forms import ScrapingJobCreateForm, ScrapingJobUpdateForm
 from .models import ScrapingJob
 
 deals = [
@@ -58,26 +59,43 @@ def test_site(request):
     return render(request, 'scraper/test_site.html', context=context)
 
 
+def test_request_vs_object_user(view):
+    object_ = view.get_object()
+
+    if view.request.user == object_.user:
+        return True
+    else:
+        return False
+
+
 class ScrapingJobListView(LoginRequiredMixin, ListView):
     model = ScrapingJob
     context_object_name = 'tasks'
     ordering = ['url']
     paginate_by = 10
 
+    def get_queryset(self, *args, **kwargs):
+        user = self.request.user
+        return ScrapingJob.objects.filter(user=user)
 
-class ScrapingJobDetailView(LoginRequiredMixin, DetailView):
+
+class ScrapingJobDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = ScrapingJob
+
+    def test_func(self):
+        return test_request_vs_object_user(self)
 
 
 class ScrapingJobCreateView(LoginRequiredMixin, CreateView):
     model = ScrapingJob
-    fields = [
-        'url',
-        'active',
-        'multiple',
-        'task',
-        'running_time',
-    ]
+    form_class = ScrapingJobCreateForm
+    # fields = [
+    #     'url',
+    #     'active',
+    #     'multiple',
+    #     'task',
+    #     'running_time',
+    # ]
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -86,26 +104,22 @@ class ScrapingJobCreateView(LoginRequiredMixin, CreateView):
 
 class ScrapingJobUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = ScrapingJob
-    fields = [
-        'url',
-        'active',
-        'multiple',
-        'running_time',
-        'task',
-        'description',
-    ]
+    form_class = ScrapingJobUpdateForm
+    # fields = [
+    #     'url',
+    #     'active',
+    #     'multiple',
+    #     'running_time',
+    #     'scraping_task',
+    #     'description',
+    # ]
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
     def test_func(self):
-        scraping_job = self.get_object()
-
-        if self.request.user == scraping_job.user:
-            return True
-        else:
-            return False
+        return test_request_vs_object_user(self)
 
 
 class ScrapingJobDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -113,18 +127,13 @@ class ScrapingJobDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
     success_url = '/scraping-tasks/'
 
     def test_func(self):
-        scraping_job = self.get_object()
-
-        if self.request.user == scraping_job.user:
-            return True
-        else:
-            return False
+        return test_request_vs_object_user(self)
 
 
 @login_required
 def scraping_job_test_run(request, pk):
     scraping_job = get_object_or_404(ScrapingJob, pk=pk)
-    task = yaml.safe_load(scraping_job.task)
+    task = yaml.safe_load(scraping_job.scraping_task.task)
 
     try:
         results, page_source = item_scraper.scrap(
