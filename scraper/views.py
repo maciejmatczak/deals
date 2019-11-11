@@ -14,7 +14,7 @@ from django.views.generic import (
 import yaml
 
 from .item_scraper import item_scraper
-from .item_scraper.validators import ValidationError as ScraptTaskValidationError
+from .item_scraper.validators import ValidationError as ScrapTaskValidationError
 from .forms import ScrapingJobForm
 from .models import ScrapingJob, ScrapingTask
 
@@ -180,7 +180,7 @@ def scraping_job_test_run(request, pk):
             task=task,
             chromedriver_path=settings.SCRAPER_CHROMEDRIVER_PATH
         )
-    except ScraptTaskValidationError as exception:
+    except ScrapTaskValidationError as exception:
         messages.warning(request, str(exception))
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
