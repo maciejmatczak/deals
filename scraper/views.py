@@ -15,7 +15,7 @@ import yaml
 
 from .item_scraper import item_scraper
 from .item_scraper.validators import ValidationError as ScraptTaskValidationError
-from .forms import (ScrapingJobCreateForm, ScrapingJobUpdateForm)
+from .forms import ScrapingJobForm
 from .models import ScrapingJob, ScrapingTask
 
 deals = [
@@ -142,7 +142,7 @@ class ScrapingJobDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
 
 class ScrapingJobCreateView(LoginRequiredMixin, CreateView):
     model = ScrapingJob
-    form_class = ScrapingJobCreateForm
+    form_class = ScrapingJobForm
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -151,7 +151,7 @@ class ScrapingJobCreateView(LoginRequiredMixin, CreateView):
 
 class ScrapingJobUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = ScrapingJob
-    form_class = ScrapingJobUpdateForm
+    form_class = ScrapingJobForm
 
     def form_valid(self, form):
         form.instance.user = self.request.user
