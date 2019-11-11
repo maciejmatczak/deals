@@ -75,7 +75,13 @@ class ScrapingTaskListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
-        return ScrapingTask.objects.filter(user=user)
+        qs = (
+            ScrapingTask.objects
+            .filter(user=user)
+            .order_by('favourite', 'title')
+        )
+
+        return qs
 
 
 class ScrapingTaskDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -125,12 +131,11 @@ class ScrapingTaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
 class ScrapingJobListView(LoginRequiredMixin, ListView):
     model = ScrapingJob
     context_object_name = 'tasks'
-    ordering = ['url']
     paginate_by = 10
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
-        return ScrapingJob.objects.filter(user=user)
+        return ScrapingJob.objects.filter(user=user).order_by('url')
 
 
 class ScrapingJobDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
