@@ -8,6 +8,7 @@
     ansistrano_shared_files:
       - ".env"
       - "db.sqlite3"
+      - "chromedriver"
     ansistrano_shared_paths:
       - "venv"
       - "static"
