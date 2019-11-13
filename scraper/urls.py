@@ -27,7 +27,7 @@ urlpatterns = [
     path('scraping-task/<int:pk>/', ScrapingTaskDetailView.as_view(),
          name='scrapingtask-testrun'),
     path('scraping-task/new/', ScrapingTaskCreateView.as_view(),
-         name='scrapingtask-create '),
+         name='scrapingtask-create'),
     path('scraping-task/<int:pk>/update/',
          ScrapingTaskUpdateView.as_view(), name='scrapingtask-update'),
     path('scraping-task/<int:pk>/delete/',
