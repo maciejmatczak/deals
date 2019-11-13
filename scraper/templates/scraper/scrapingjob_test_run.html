@@ -4,9 +4,9 @@
   {% for result in results %}
     <div class="entry-section">
 
-      <div class="entry-content">
-        <pre><code class="YAML">{{ result }}</code></pre>
-      </div>
+      {% comment %} <div class="entry-content"> {% endcomment %}
+        <pre class="mb-0"><code class="YAML">{{ result }}</code></pre>
+      {% comment %} </div> {% endcomment %}
 
     </div>
   {% endfor %}

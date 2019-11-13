@@ -1,7 +1,10 @@
 {% extends 'scraper/base.html' %}
 
 {% block content %}
-
+  <div class="entry-section">
+      <a class="btn btn-primary btn-sm" href="{% url 'scrapingtask-create' %}">Create new scraping task</a>
+  </div>
+  
   {% for task in object_list %}
     <div class="entry-section">
       <div class="entry-header">
