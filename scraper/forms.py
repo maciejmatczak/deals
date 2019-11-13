@@ -21,6 +21,7 @@ class ScrapingJobForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.current_user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         self.fields['scraping_task'].queryset = \
-            ScrapingTask.objects.filter(user=self.instance.user)
+            ScrapingTask.objects.filter(user=self.current_user)

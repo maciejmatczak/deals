@@ -149,6 +149,11 @@ class ScrapingJobCreateView(LoginRequiredMixin, CreateView):
     model = ScrapingJob
     form_class = ScrapingJobForm
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
@@ -158,9 +163,10 @@ class ScrapingJobUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     model = ScrapingJob
     form_class = ScrapingJobForm
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def test_func(self):
         return test_request_vs_object_user(self)
