@@ -16,7 +16,7 @@ import yaml
 from .item_scraper import item_scraper
 from .item_scraper.validators import ValidationError as ScrapTaskValidationError
 from .forms import ScrapingJobForm
-from .models import ScrapingJob, ScrapingTask
+from .models import ScrapingJob, ScrapingTask, Item
 
 deals = [
     {
@@ -178,6 +178,16 @@ class ScrapingJobDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
 
     def test_func(self):
         return test_request_vs_object_user(self)
+
+
+class ItemListView(LoginRequiredMixin, ListView):
+    model = Item
+    context_object_name = 'items'
+    paginate_by = 10
+
+    def get_queryset(self, *args, **kwargs):
+        user = self.request.user
+        return Item.objects.filter(scraping_job__user=user).order_by('id')
 
 
 @login_required
