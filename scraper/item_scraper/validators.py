@@ -30,7 +30,7 @@ def validate_css_selector(selector):
 def validate_task(task):
     for field in ('item', 'extract'):
         if field not in task:
-            raise ValidationError(f'Item "{field}" not in task')
+            raise ValidationError(f'Field "{field}" not in task')
 
     for selector_extractor in task['extract'].values():
         if '|' not in selector_extractor:
