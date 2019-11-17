@@ -66,5 +66,7 @@ class Product(models.Model):
 
 class Item(models.Model):
     data = models.TextField(blank=False, validators=[validate_yaml])
+    date_found = models.DateTimeField(auto_now_add=True)
+
     scraping_job = models.ForeignKey(
         ScrapingJob, on_delete=models.SET_NULL, null=True)
