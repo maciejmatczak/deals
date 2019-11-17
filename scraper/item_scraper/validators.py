@@ -33,9 +33,15 @@ def validate_task(task):
             raise ValidationError(f'Field "{field}" not in task')
 
     for selector_extractor in task['extract'].values():
-        if '|' not in selector_extractor:
+        if selector_extractor.count('|') == 0:
             raise ValidationError(
-                f'Pipe "|" missing in "{selector_extractor}", no way to distunguish selector from extractor'
+                f'Pipe "|" missing in "{selector_extractor}", no way to'
+                f'distunguish selector from extractor'
+            )
+        elif selector_extractor.count('|') > 1:
+            raise ValidationError(
+                f'Only one pipe "|" allowed in selector-extractor: '
+                f'"{selector_extractor}"'
             )
 
 
