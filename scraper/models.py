@@ -50,20 +50,6 @@ class ScrapingJob(models.Model):
         return reverse('scrapingjob-detail', kwargs={'pk': self.pk})
 
 
-class Product(models.Model):
-    name = models.TextField(blank=False)
-    url = models.URLField(max_length=600, blank=False)
-    price = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
-    image_url = models.URLField(blank=False)
-
-    date_found = models.DateTimeField(auto_now_add=True)
-    description = models.TextField(blank=True)
-
-    scraping_job = models.ForeignKey(
-        ScrapingJob, on_delete=models.SET_NULL, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
 class Item(models.Model):
     data = models.TextField(blank=False, validators=[validate_yaml])
     date_found = models.DateTimeField(auto_now_add=True)
