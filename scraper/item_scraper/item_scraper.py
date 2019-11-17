@@ -3,7 +3,7 @@ from io import StringIO
 import re
 
 from .page_downloader import download_page
-from .validators import validate_task, validate_file_path
+from .validators import validate_task, validate_file_path, ValidationError
 
 
 SPACES = re.compile(r'\s')
@@ -11,7 +11,14 @@ SPACES = re.compile(r'\s')
 
 def scrap(url, task, chromedriver_path, cache_dir=None, use_cache=False, endless_page=True):
     validate_task(task)
-    validate_file_path(chromedriver_path)
+
+    try:
+        validate_file_path(chromedriver_path)
+    except ValidationError as error:
+        raise ValidationError(
+            f'chromedriver was not found!'
+            f'{error}'
+        )
 
     page_source = download_page(
         url,
@@ -45,7 +52,8 @@ def parse(page_source, task):
                 if method == 'text':
                     # text = r[0].text_content()
                     text = ' '.join(r.text_content() for r in r)
-                    cleaned_text = ' '.join(el for el in SPACES.split(text) if el)
+                    cleaned_text = ' '.join(
+                        el for el in SPACES.split(text) if el)
 
                     sub_data[field] = cleaned_text
                 else:
