@@ -1,6 +1,6 @@
 ansible
 cssselect
-django
+django~=2.2.7
 django-crispy-forms
 gunicorn
 lxml
