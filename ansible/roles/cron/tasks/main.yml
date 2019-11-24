@@ -1,0 +1,11 @@
+- name: Register scrap job runner
+  cron:
+    name: "scrap job runner"
+    minute: "*/5"
+    job: "{{ ansistrano_shared_path }}/venv/bin/python {{ ansistrano_release_path.stdout }}/manage.py jobs_run"
+
+- name: Register scrap job resetter
+  cron:
+    name: "scrap job resetter"
+    special_time: "daily"
+    job: "{{ ansistrano_shared_path }}/venv/bin/python {{ ansistrano_release_path.stdout }}/manage.py jobs_reset"
