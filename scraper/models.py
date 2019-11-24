@@ -38,6 +38,7 @@ class ScrapingJob(models.Model):
     multiple = models.BooleanField(default=False, blank=False)
     description = models.TextField(blank=True)
     running_time = models.TimeField(blank=False)
+    was_run_today = models.BooleanField(default=False, blank=False)
 
     scraping_task = models.ForeignKey(
         ScrapingTask, on_delete=models.SET_NULL, null=True)
