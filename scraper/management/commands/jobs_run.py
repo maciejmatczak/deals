@@ -26,18 +26,18 @@ def jobs_to_run(before: time):
 
 
 class Command(BaseCommand):
-    help = 'Resets jobs state of being already run'
+    help = 'Runs scrap routines for every user and registers new items'
 
     def handle(self, *args, **options):
         now = datetime.now().time()
 
         self.stdout.write(
-            f'SCRAPPING STARTED @ {now}'
+            f'Running scrap routine @ {now}'
         )
 
         for scraping_job in jobs_to_run(before=now):
             self.stdout.write(
-                f'SCRAPPING {scraping_job} ({scraping_job.id}) '
+                f'Scraping {scraping_job} ({scraping_job.id}) '
                 f'for {scraping_job.user}'
             )
 
