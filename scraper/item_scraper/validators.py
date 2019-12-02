@@ -44,6 +44,11 @@ def validate_task(task):
                 f'"{selector_extractor}"'
             )
 
+    if 'identifier' not in task['extract'].keys():
+        raise ValidationError(
+            f'"identifier" is a required field for the extractor definitions'
+        )
+
 
 def validate_file_path(path):
     p = Path(path)

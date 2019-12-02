@@ -1,5 +1,8 @@
 from pytest import raises
 from pathlib import Path
+import yaml
+from io import StringIO
+from textwrap import dedent
 
 from scraper.item_scraper.item_scraper import parse
 from scraper.item_scraper.validators import (
@@ -26,6 +29,17 @@ def test_file_path_validator(tmp_path):
         validate_file_path('|_|_')
     validate_file_path(p)
     validate_file_path(str(p))
+
+
+def test_task_validator():
+    with raises(ValidationError):
+        task = yaml.safe_load(StringIO(dedent('''\
+            item: some.item yielder | text
+            extract:
+              image: img.card-img-top|src
+        ''')))
+
+        validate_task(task)
 
 
 def test_parse():
