@@ -72,11 +72,13 @@ class Command(BaseCommand):
 
                 if Item.objects.filter(
                     scraping_job__user=scraping_job.user,
+                    identifier=result['identifier'],
                     data=data
                 ).count() == 0:
                     item = Item(
-                        data=data,
-                        scraping_job=scraping_job
+                        scraping_job=scraping_job,
+                        identifier=result['identifier'],
+                        data=data
                     )
                     item.save()
                     save_count += 1

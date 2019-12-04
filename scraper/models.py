@@ -52,7 +52,7 @@ class ScrapingJob(models.Model):
 
 
 class Item(models.Model):
-    identifier = models.TextField(blank=False)
+    identifier = models.TextField(blank=False, default='')
     data = models.TextField(blank=False, validators=[validate_yaml])
     date_found = models.DateTimeField(auto_now_add=True)
 
