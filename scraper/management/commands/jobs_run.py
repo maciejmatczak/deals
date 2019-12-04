@@ -3,7 +3,7 @@ from django.conf import settings
 from datetime import datetime, time
 import yaml
 
-from scraper.models import ScrapingJob, Item
+from scraper.models import ScrapingJob, Item, ItemState
 from scraper.item_scraper import item_scraper
 from scraper.item_scraper.validators import (
     ValidationError as ScrapTaskValidationError
@@ -67,20 +67,21 @@ class Command(BaseCommand):
 
             save_count = 0
             for result in results:
+                identifier = result['identifier']
+
                 data = yaml.dump(result, default_flow_style=False,
                                  allow_unicode=True)
 
-                if Item.objects.filter(
-                    scraping_job__user=scraping_job.user,
-                    identifier=result['identifier'],
+                item, _ = Item.objects.get_or_create(
+                    identifier=identifier,
+                    scraping_job=scraping_job
+                )
+
+                _, created = ItemState.objects.get_or_create(
+                    item=item,
                     data=data
-                ).count() == 0:
-                    item = Item(
-                        scraping_job=scraping_job,
-                        identifier=result['identifier'],
-                        data=data
-                    )
-                    item.save()
+                )
+                if created:
                     save_count += 1
 
             self.stdout.write(self.style.SUCCESS(

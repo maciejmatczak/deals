@@ -1,3 +1,4 @@
+from django.db.models import Max
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -187,7 +188,9 @@ class ItemListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
-        return Item.objects.filter(scraping_job__user=user).order_by('id')
+        return Item.objects.filter(scraping_job__user=user)\
+            .annotate(latest_state_update=Max('itemstate__date_found'))\
+            .order_by('-latest_state_update')
 
 
 @login_required

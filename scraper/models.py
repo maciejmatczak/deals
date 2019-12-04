@@ -53,8 +53,17 @@ class ScrapingJob(models.Model):
 
 class Item(models.Model):
     identifier = models.TextField(blank=False, default='')
-    data = models.TextField(blank=False, validators=[validate_yaml])
-    date_found = models.DateTimeField(auto_now_add=True)
 
     scraping_job = models.ForeignKey(
         ScrapingJob, on_delete=models.SET_NULL, null=True)
+
+
+class ItemState(models.Model):
+    class Meta:
+        ordering = ['-date_found']
+
+    data = models.TextField(blank=False, validators=[validate_yaml])
+    date_found = models.DateTimeField(auto_now_add=True)
+
+    item = models.ForeignKey(
+        Item, on_delete=models.SET_NULL, null=True)
