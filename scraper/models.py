@@ -67,3 +67,8 @@ class ItemState(models.Model):
 
     item = models.ForeignKey(
         Item, on_delete=models.SET_NULL, null=True)
+
+    def data_as_dict(self):
+        data = yaml.safe_load(self.data)
+        data.update({'date_found': self.date_found})
+        return data
