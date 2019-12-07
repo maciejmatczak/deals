@@ -5,7 +5,7 @@ from .views import (home, ScrapingJobListView, ScrapingJobDetailView,
                     ScrapingJobDeleteView, scraping_job_test_run, test_site,
                     ScrapingTaskListView, ScrapingTaskDetailView,
                     ScrapingTaskCreateView, ScrapingTaskUpdateView,
-                    ScrapingTaskDeleteView, ItemListView)
+                    ScrapingTaskDeleteView, item_list)
 
 urlpatterns = [
     path('', home, name='scraper-home'),
@@ -33,5 +33,5 @@ urlpatterns = [
     path('scraping-task/<int:pk>/delete/',
          ScrapingTaskDeleteView.as_view(), name='scrapingtask-delete'),
     path('scrapped-items/',
-         ItemListView.as_view(), name='scrappeditems'),
+         item_list, name='scrappeditems'),
 ]

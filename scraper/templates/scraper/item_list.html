@@ -1,25 +1,47 @@
 {% extends 'scraper/base.html' %}
 
 {% block content %}
-  {% for item in items %}
+  {% for item_data in items_data %}
     <div class="entry-section">
       <div class="entry-header">
         <h5 class="entry-title">
-          {{item.identifier}}
+          {{item_data.item.identifier}}
         </h5>
 
         <div class="entry-metadata">
           <span class="entry-metadata-element">
-            Last update: {{item.latest_state_update|date:'Y-m-d H:i'}}
+            Last update: {{item_data.item.latest_state_update|date:'Y-m-d H:i'}}
           </span>
         </div>
       </div>
 
     <div class="entry-content">
-      {% for item_state in item.itemstate_set.all %}
-        {{ item_state.date_found|date:'Y-m-d H:i'}}
-        <pre><code class="YAML">{{ item_state.data }}</code></pre>
-      {% endfor %}
+      <div class="table-responsive">
+        <table class="table table-striped table-sm table-hover table-fit">
+          {% for attribute, diffs in item_data.diff_view.items %}
+            <tr>
+              <th scope="row">{{ attribute }}</th>
+              {% for diff in diffs %}
+                {% if diff.data %}
+                  {% if diff.status == "new" %}
+                    <td class="text-success">
+                  {% else %}
+                    <td class="text-secondary">
+                  {% endif %}
+                    {% if attribute == "date_found" %}
+                      {{ diff.data|date:'H:i d.m' }}
+                    {% else %}
+                      {{ diff.data }}
+                    {% endif %}
+                  </td>
+                {% else %}
+                  <td></td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
     </div>
 
     </div>

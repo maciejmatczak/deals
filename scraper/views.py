@@ -1,5 +1,6 @@
 from django.db.models import Max
 from django.conf import settings
+from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -13,6 +14,7 @@ from django.views.generic import (
     DeleteView
 )
 import yaml
+from typing import NamedTuple
 
 from .item_scraper import item_scraper
 from .item_scraper.validators import ValidationError as ScrapTaskValidationError
@@ -181,16 +183,78 @@ class ScrapingJobDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
         return test_request_vs_object_user(self)
 
 
-class ItemListView(LoginRequiredMixin, ListView):
-    model = Item
-    context_object_name = 'items'
-    paginate_by = 10
+class Diff(NamedTuple):
+    data: str
+    status: str
 
-    def get_queryset(self, *args, **kwargs):
-        user = self.request.user
-        return Item.objects.filter(scraping_job__user=user)\
-            .annotate(latest_state_update=Max('itemstate__date_found'))\
-            .order_by('-latest_state_update')
+
+@login_required
+def item_list(request):
+    user = request.user
+
+    all_items = Item.objects.filter(scraping_job__user=user)\
+        .annotate(latest_state_update=Max('itemstate__date_found'))\
+        .order_by('-latest_state_update').all()
+
+    paginator = Paginator(all_items, 10)
+    page = request.GET.get('page')
+    items = paginator.get_page(page)
+
+    items_data = []
+
+    for item in items:
+
+        keys = set()
+        for state in item.itemstate_set.all():
+            data = state.data_as_dict()
+            keys |= set(data.keys())
+        keys = sorted(keys)
+
+        diff_view = {}
+        known_state_data = None
+        for state in item.itemstate_set.all().reverse():
+            data = state.data_as_dict()
+            for key in keys:
+                if key not in data:
+                    data[key] = None
+
+            if not known_state_data:
+                for key in keys:
+                    diff_view[key] = [
+                        Diff(
+                            data=data[key],
+                            status='new'
+                        )
+                    ]
+                known_state_data = data
+                continue
+
+            for key in keys:
+                if data[key] == known_state_data[key]:
+                    status = 'as old'
+                else:
+                    status = 'new'
+
+                diff_view[key].append(
+                    Diff(
+                        data=data[key],
+                        status=status
+                    )
+                )
+
+            known_state_data.update(data)
+
+        items_data.append({
+            'item': item,
+            'diff_view': {k: reversed(v) for k, v in diff_view.items()}
+        })
+
+    context = {
+        'is_paginated': True,
+        'page_obj': items,
+        'items_data': items_data
+    }
+    return render(request, 'scraper/item_list.html', context=context)
 
 
 @login_required
