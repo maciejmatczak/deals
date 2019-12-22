@@ -203,50 +203,37 @@ def item_list(request):
     items_data = []
 
     for item in items:
-
+        last_two_states = item.itemstate_set.all()[0:2]
         keys = set()
-        for state in item.itemstate_set.all():
+        for state in last_two_states:
             data = state.data_as_dict()
-            keys |= set(data.keys())
+            keys |= set(k for k in data.keys() if data[k])
         keys = sorted(keys)
 
-        diff_view = {}
-        known_state_data = None
-        for state in item.itemstate_set.all().reverse():
-            data = state.data_as_dict()
-            for key in keys:
-                if key not in data:
-                    data[key] = None
+        if len(last_two_states) == 2:
+            current_state, older_state = last_two_states
+        else:
+            current_state, older_state = last_two_states[0], None
 
-            if not known_state_data:
-                for key in keys:
-                    diff_view[key] = [
-                        Diff(
-                            data=data[key],
-                            status='new'
-                        )
-                    ]
-                known_state_data = data
-                continue
+        recent_history = []
+        for key in keys:
+            current_value = current_state.data_as_dict().get(key, '')
+            if older_state:
+                older_value = older_state.data_as_dict().get(key, '')
+            else:
+                older_value = ''
 
-            for key in keys:
-                if data[key] == known_state_data[key]:
-                    status = 'as old'
-                else:
-                    status = 'new'
-
-                diff_view[key].append(
-                    Diff(
-                        data=data[key],
-                        status=status
-                    )
-                )
-
-            known_state_data.update(data)
+            recent_history.append(
+                {
+                    'attribute': key,
+                    'current': current_value,
+                    'old': older_value
+                }
+            )
 
         items_data.append({
             'item': item,
-            'diff_view': {k: reversed(v) for k, v in diff_view.items()}
+            'recent_history': recent_history
         })
 
     context = {

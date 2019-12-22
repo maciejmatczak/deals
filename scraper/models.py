@@ -71,4 +71,11 @@ class ItemState(models.Model):
     def data_as_dict(self):
         data = yaml.safe_load(self.data)
         data.update({'date_found': self.date_found})
+
+        for key in ['image', 'identifier']:
+            try:
+                data.pop(key)
+            except KeyError:
+                pass
+
         return data

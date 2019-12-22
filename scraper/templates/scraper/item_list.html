@@ -17,27 +17,21 @@
 
     <div class="entry-content">
       <div class="table-responsive">
-        <table class="table table-striped table-sm table-hover table-fit">
-          {% for attribute, diffs in item_data.diff_view.items %}
+        <table class="table table-borderless table-sm table-hover table-fit">
+          {% for data in item_data.recent_history %}
             <tr>
-              <th scope="row">{{ attribute }}</th>
-              {% for diff in diffs %}
-                {% if diff.data %}
-                  {% if diff.status == "new" %}
-                    <td class="text-success">
-                  {% else %}
-                    <td class="text-secondary">
-                  {% endif %}
-                    {% if attribute == "date_found" %}
-                      {{ diff.data|date:'H:i d.m' }}
-                    {% else %}
-                      {{ diff.data }}
-                    {% endif %}
-                  </td>
-                {% else %}
-                  <td></td>
-                {% endif %}
-              {% endfor %}
+              <th scope="row">{{ data.attribute }}</th>
+              <td>{% if data.attribute == "date_found" %}{{ data.current|date:'Y-m-d H:i' }}{% else %}{{ data.current }}{% endif %}</td>
+              {% if data.current == data.old %}
+              <td></td>
+              {% else %}
+              <td style="text-decoration: line-through;">{% if data.attribute == "date_found" %}{{ data.old|date:'Y-m-d H:i' }}{% else %}{{ data.old }}{% endif %}</td>
+              {% endif %}
+                      {% comment %} {% if attribute == "date_found" %}
+                        {{ diff.data|date:'H:i d.m' }}
+                      {% else %}
+                        {{ diff.data }}
+                      {% endif %} {% endcomment %}
             </tr>
           {% endfor %}
         </table>
