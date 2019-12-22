@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 import yaml
-
+from enum import Enum
 
 User = get_user_model()
 
@@ -49,6 +49,23 @@ class ScrapingJob(models.Model):
 
     def get_absolute_url(self):
         return reverse('scrapingjob-detail', kwargs={'pk': self.pk})
+
+
+class ResultChoice(Enum):
+    OK_NEW = 'New results available'
+    OK_NONEW = 'No new results available'
+    PAGE_UNAVAILABLE = 'Page not available'
+
+
+class ScrapingJobLog(models.Model):
+    date_run = models.DateTimeField(auto_now_add=True)
+
+    result = models.IntegerField(
+        choices=((c.name, c.value) for c in ResultChoice)
+    )
+
+    scraping_job = models.ForeignKey(
+        ScrapingJob, on_delete=models.CASCADE)
 
 
 class Item(models.Model):
