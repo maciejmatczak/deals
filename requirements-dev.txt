@@ -1,5 +1,6 @@
 -r requirements.txt
 pytest
+autopep8
 flake8
 rope
 pytest-watch
