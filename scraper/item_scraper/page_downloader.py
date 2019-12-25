@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import string
 from pathlib import Path
+from urllib.request import urlopen, HTTPError
 
 
 def format_filename(s):
@@ -39,8 +40,11 @@ def download_page(url, chromedriver_path, cache_dir=None, use_cache=False, endle
 
         if endless_page:
             for _ in range(5):
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                driver.execute_script(
+                    "window.scrollTo(0, document.body.scrollHeight);")
                 driver.implicitly_wait(2)
+
+        urlopen(url)
 
         driver.get(url)
 
