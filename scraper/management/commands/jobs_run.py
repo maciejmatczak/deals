@@ -3,8 +3,12 @@ from django.conf import settings
 from datetime import datetime, time
 import yaml
 
-from scraper.models import ScrapingJob, Item, ItemState
+from scraper.models import (
+    ScrapingJob, ScrapingJobLog, ResultChoice, Item, ItemState)
 from scraper.item_scraper import item_scraper
+from scraper.item_scraper.page_downloader import (
+    HTTPError
+)
 from scraper.item_scraper.validators import (
     ValidationError as ScrapTaskValidationError
 )
@@ -50,8 +54,27 @@ class Command(BaseCommand):
                     chromedriver_path=settings.SCRAPER_CHROMEDRIVER_PATH
                 )
             except ScrapTaskValidationError as exception:
+                ScrapingJobLog.objects.create(
+                    scraping_job=scraping_job,
+                    result=ResultChoice.INVALID_TASK,
+                    result_info=str(exception)
+                )
                 self.stderr.write(
-                    f'ERROR during scrapping:\n'
+                    f'VALIDATION ERROR during scrapping:\n'
+                    f'USER={scraping_job.user}\n'
+                    f'JOB={scraping_job}\n'
+                    f'TASK={task}\n'
+                    f'EXCEPTION={exception}\n'
+                )
+                continue
+            except HTTPError as exception:
+                ScrapingJobLog.objects.create(
+                    scraping_job=scraping_job,
+                    result=ResultChoice.PAGE_UNAVAILABLE,
+                    result_info=str(exception)
+                )
+                self.stderr.write(
+                    f'HTTP ERROR during scrapping:\n'
                     f'USER={scraping_job.user}\n'
                     f'JOB={scraping_job}\n'
                     f'TASK={task}\n'
@@ -86,3 +109,12 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS(
                 f'SAVED {save_count} results'))
+
+            log_result = ResultChoice.OK_NONEW
+            if save_count > 0:
+                log_result = ResultChoice.OK_NEW
+
+            ScrapingJobLog.objects.create(
+                scraping_job=scraping_job,
+                result=log_result
+            )

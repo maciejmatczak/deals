@@ -21,10 +21,12 @@ from .item_scraper.validators import ValidationError as ScrapTaskValidationError
 from .forms import ScrapingJobForm
 from .models import ScrapingJob, ScrapingTask, Item
 
+
+from random import random
 deals = [
     {
         'title': 'Szorty kąpielowe',
-        'price': '19.99',
+        'price': f'{random()*20:.2f}',
         'date_found': '2018-12-01'
     },
     {
@@ -203,27 +205,39 @@ def item_list(request):
     items_data = []
 
     for item in items:
-        last_two_states = item.itemstate_set.all()[0:2]
-        keys = set()
+        last_two_states = item.itemstate_set.order_by('-date_found')[0:2]
+        combined_keys = set()
         for state in last_two_states:
             data = state.data_as_dict()
-            keys |= set(k for k in data.keys() if data[k])
-        keys = sorted(keys)
+            combined_keys |= set(k for k in data.keys() if data[k])
+        combined_keys = sorted(combined_keys)
 
         if len(last_two_states) == 2:
             current_state, older_state = last_two_states
-        else:
+        elif len(last_two_states) == 1:
             current_state, older_state = last_two_states[0], None
+        else:
+            continue
 
-        recent_history = []
-        for key in keys:
+        if older_state:
+            older_date_found = older_state.date_found
+        else:
+            older_date_found = ''
+
+        recent_history = {
+            'current_date_found': current_state.date_found,
+            'older_date_found': older_date_found,
+            'rest': []
+        }
+
+        for key in combined_keys:
             current_value = current_state.data_as_dict().get(key, '')
             if older_state:
                 older_value = older_state.data_as_dict().get(key, '')
             else:
                 older_value = ''
 
-            recent_history.append(
+            recent_history['rest'].append(
                 {
                     'attribute': key,
                     'current': current_value,
@@ -232,7 +246,11 @@ def item_list(request):
             )
 
         items_data.append({
-            'item': item,
+            'identifier': item.identifier,
+            'last_update': item.latest_state_update,
+            'last_run': item.scraping_job.last_log.date_run,
+            'last_run_result': item.scraping_job.last_log.result,
+            'last_run_result_info': item.scraping_job.last_log.result_info,
             'recent_history': recent_history
         })
 

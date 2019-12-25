@@ -5,20 +5,41 @@
     <div class="entry-section">
       <div class="entry-header">
         <h5 class="entry-title">
-          {{item_data.item.identifier}}
+          {{item_data.identifier}}
         </h5>
 
         <div class="entry-metadata">
-          <span class="entry-metadata-element">
-            Last update: {{item_data.item.latest_state_update|date:'Y-m-d H:i'}}
-          </span>
+          <div class="entry-metadata-element">
+            <div class="d-lg-inline">
+              Last update: {{ item_data.last_update|date:'Y-m-d H:i' }}
+            </div>
+            <div class="d-lg-inline ml-lg-2">
+              Last run: {{ item_data.last_run|date:'Y-m-d H:i'}}
+            </div>
+            <div class="d-lg-inline ml-lg-2">
+              {% if item_data.last_run_result == 'ResultChoice.OK_NEW' %}
+              <i class="fas fa-thumbs-up"></i> | NEW ITEMS <i class="fas fa-exclamation"></i>
+              {% elif item_data.last_run_result == 'ResultChoice.OK_NONEW' %}
+              <i class="fas fa-thumbs-up"></i>
+              {% elif item_data.last_run_result == 'ResultChoice.INVALID_TASK' %}
+              <i class="fas fa-thumbs-up"></i> | {{ last_run_result_info }}
+              {% elif item_data.last_run_result == 'ResultChoice.PAGE_UNAVAILABLE' %}
+              <i class="fas fa-exclamation-circle"></i> | {{ last_run_result_info }}
+              {% endif %}
+            </div>
+          </div>
         </div>
       </div>
 
     <div class="entry-content">
       <div class="table-responsive">
         <table class="table table-borderless table-sm table-hover table-fit">
-          {% for data in item_data.recent_history %}
+          <tr>
+            <th scope="row">Date found</th>
+            <td>{{ item_data.recent_history.current_date_found|date:'Y-m-d H:i' }}</td>
+            <td>{{ item_data.recent_history.older_date_found|date:'Y-m-d H:i' }}</td>
+          </tr>
+          {% for data in item_data.recent_history.rest %}
             <tr>
               <th scope="row">{{ data.attribute }}</th>
               <td>{% if data.attribute == "date_found" %}{{ data.current|date:'Y-m-d H:i' }}{% else %}{{ data.current }}{% endif %}</td>
@@ -27,11 +48,6 @@
               {% else %}
               <td style="text-decoration: line-through;">{% if data.attribute == "date_found" %}{{ data.old|date:'Y-m-d H:i' }}{% else %}{{ data.old }}{% endif %}</td>
               {% endif %}
-                      {% comment %} {% if attribute == "date_found" %}
-                        {{ diff.data|date:'H:i d.m' }}
-                      {% else %}
-                        {{ diff.data }}
-                      {% endif %} {% endcomment %}
             </tr>
           {% endfor %}
         </table>

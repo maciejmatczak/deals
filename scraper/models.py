@@ -50,22 +50,37 @@ class ScrapingJob(models.Model):
     def get_absolute_url(self):
         return reverse('scrapingjob-detail', kwargs={'pk': self.pk})
 
+    @property
+    def last_log(self):
+        if self.scrapingjoblog_set is not None and self.scrapingjoblog_set.count() > 0:
+            return self.scrapingjoblog_set.first()
+        else:
+            return None
+
 
 class ResultChoice(Enum):
     OK_NEW = 'New results available'
     OK_NONEW = 'No new results available'
+    INVALID_TASK = 'Invalid task'
     PAGE_UNAVAILABLE = 'Page not available'
 
 
 class ScrapingJobLog(models.Model):
+    class Meta:
+        ordering = ['-date_run']
+
     date_run = models.DateTimeField(auto_now_add=True)
 
-    result = models.IntegerField(
-        choices=((c.name, c.value) for c in ResultChoice)
+    result = models.TextField(
+        choices=((c, c.value) for c in ResultChoice)
     )
+    result_info = models.TextField(blank=True)
 
     scraping_job = models.ForeignKey(
         ScrapingJob, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.id}: {self.result} @ {self.scraping_job}'
 
 
 class Item(models.Model):
@@ -87,7 +102,6 @@ class ItemState(models.Model):
 
     def data_as_dict(self):
         data = yaml.safe_load(self.data)
-        data.update({'date_found': self.date_found})
 
         for key in ['image', 'identifier']:
             try:
@@ -96,3 +110,23 @@ class ItemState(models.Model):
                 pass
 
         return data
+
+    @classmethod
+    def register(cls, scraping_job, scrapped_data):
+        # scrapped data will consist characteristic items, as well as
+        # some standard one
+
+        identifier = scrapped_data['identifier']
+        image = scrapped_data.pop('image', None)
+
+        item, _ = Item.objects.get_or_create(
+            identifier=identifier,
+            scraping_job=scraping_job
+        )
+
+        _, created = cls.get_or_create(
+            item=item,
+            data=scrapped_data
+        )
+
+        return created
