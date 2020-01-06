@@ -6,3 +6,5 @@ rope
 pytest-watch
 pytest-cov
 pytest-dotenv
+pytest-factoryboy
+pytest-django
