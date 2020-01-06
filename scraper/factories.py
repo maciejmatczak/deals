@@ -22,7 +22,6 @@ class ScrapingJobFactory(factory.DjangoModelFactory):
 
     url = factory.Faker('url')
     active = factory.Faker('boolean')
-    multiple = factory.Faker('boolean')
     description = factory.Faker('text')
     running_time = factory.Faker('time')
 
