@@ -16,24 +16,23 @@
     <link rel="stylesheet" type="text/css" href="{% static 'scraper/main.css' %}">
 
     {% if title %}
-      <title>Deals - {{ title }}</title>
+      <title>Scraper - {{ title }}</title>
     {% else %}
-      <title>Deals</title>
+      <title>Scraper</title>
     {% endif %}
   </head>
   <body>
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-      <a class="navbar-brand" href="{% url 'scraper-home' %}">Deals</a>
+      <a class="navbar-brand" href="{% url 'scrapeditems' %}">Scraper</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav mr-auto">
-          <a class="nav-item nav-link" href="{% url 'scraper-home' %}">Home</a>
-          <a class="nav-item nav-link" href="{% url 'scrapingjobs' %}">Scraping jobs</a>
-          <a class="nav-item nav-link" href="{% url 'scrapingtasks' %}">Scraping tasks</a>
-          <a class="nav-item nav-link" href="{% url 'scrappeditems' %}">Scrapped items</a>
+          <a class="nav-item nav-link" href="{% url 'scrapeditems' %}">Items</a>
+          <a class="nav-item nav-link" href="{% url 'scrapingjobs' %}">Jobs</a>
+          <a class="nav-item nav-link" href="{% url 'scrapingtasks' %}">Tasks</a>
         </div>
 
         <div class="navbar-nav">
