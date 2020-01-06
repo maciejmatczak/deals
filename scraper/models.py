@@ -26,7 +26,7 @@ class ScrapingTask(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.title + ': ' + self.task
+        return self.title
 
     def get_absolute_url(self):
         return reverse('scrapingtask-detail', kwargs={'pk': self.pk})
