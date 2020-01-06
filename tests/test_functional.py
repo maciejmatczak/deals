@@ -45,7 +45,7 @@ def test_standard_scenario(live_server, browser, user_factory,
     browser.find_element_by_partial_link_text("jobs").click()
 
     # user1 should se only 2 jobs
-    jobs_divs = browser.find_elements_by_css_selector('div.entry-section')
+    jobs_divs = browser.find_elements_by_css_selector('.entry-title')
     assert len(jobs_divs) == 2
 
     # but let's double check if detail view of the other one gives an error
