@@ -1,0 +1,51 @@
+{% extends 'scraper/base.html' %}
+
+{% block content %}
+
+  <div class="entry-section">
+      <a class="btn btn-primary btn-sm" href="{% url 'scrapingjob-create' %}">Create new scraping job</a>
+  </div>
+
+  <div class="entry-section">
+    <table class="table table-sm">
+      <thead class="thead-dark">
+        <tr>
+          <th>URL</th>
+          <th>Active</th>
+          <th>Run time</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      {% for job in jobs %}
+        <tr>
+          <td class="break-all">{{ job.url }}</td>
+          <td>
+            {% if job.active %}
+              <i class="fas fa-toggle-on"></i>
+            {% else %}
+              <i class="fas fa-toggle-off"></i>
+            {% endif %}
+          </td>
+          <td>
+            {{ job.running_time | time:"H:i:s" }}
+          </td>
+          <td>
+            <a href="{% url 'scrapingjob-detail' pk=job.id %}" class="pr-2">
+            <i class="fas fa-info"></i>
+            </a>
+            <a href="{% url 'scrapingjob-update' pk=job.id %}" class="pr-2">
+            <i class="fas fa-pen"></i>
+            </a>
+            <a href="{% url 'scrapingjob-testrun' pk=job.id %}" class="pr-2">
+            <i class="fas fa-flask"></i>
+            </a>
+            <a href="{% url 'scrapingjob-delete' pk=job.id %}">
+            <i class="fas fa-trash"></i>
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+{% endblock content %}

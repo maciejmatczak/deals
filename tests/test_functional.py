@@ -9,9 +9,9 @@ def test_home_page(live_server, browser):
     # Open the home page
     browser.get(live_server.url)
 
-    assert 'Deals' in browser.title
+    assert 'Scraper' in browser.title
 
-    browser.find_element_by_partial_link_text("jobs").click()
+    browser.find_element_by_partial_link_text("Jobs").click()
 
 
 @pytest.mark.django_db
@@ -37,15 +37,15 @@ def test_standard_scenario(live_server, browser, user_factory,
     browser.get(live_server.url)
 
     # user is not yet logged in, so trying to view jobs should show login view
-    browser.find_element_by_partial_link_text("jobs").click()
+    browser.find_element_by_partial_link_text("Jobs").click()
     browser.find_element_by_name('username').send_keys(user1.username)
     browser.find_element_by_name('password').send_keys('1234')
     browser.find_element_by_css_selector("button[type='submit']").click()
 
-    browser.find_element_by_partial_link_text("jobs").click()
+    browser.find_element_by_partial_link_text("Jobs").click()
 
-    # user1 should se only 2 jobs
-    jobs_divs = browser.find_elements_by_css_selector('.entry-title')
+    # user1 should see only 2
+    jobs_divs = browser.find_elements_by_css_selector('tbody tr')
     assert len(jobs_divs) == 2
 
     # but let's double check if detail view of the other one gives an error
@@ -60,14 +60,16 @@ def test_standard_scenario(live_server, browser, user_factory,
     assert task11.task in browser.find_element_by_tag_name('body').text,\
         browser.find_element_by_tag_name('body').text
     browser.get(live_server.url +
-                reverse('scrapingjob-detail', args=[job12 .pk]))
+                reverse('scrapingjob-detail', args=[job12.pk]))
     assert task12.task in browser.find_element_by_tag_name('body').text,\
         browser.find_element_by_tag_name('body').text
 
     # we should be able to change second job to task11
     browser.get(live_server.url + reverse('scrapingjobs'))
-    browser.find_element_by_partial_link_text(job12.url).click()
-    browser.find_element_by_partial_link_text('Update').click()
+
+    url = reverse('scrapingjob-update', args=[job12.pk])
+    browser.find_element_by_css_selector(f'a[href*="{url}"').click()
+
     for option in browser.find_elements_by_css_selector(
         "select[name='scraping_task'] option"
     ):
@@ -102,12 +104,12 @@ def test_working_with_tasks(live_server, browser, user_factory,
 
     # Open the home page and log in as user1
     browser.get(live_server.url)
-    browser.find_element_by_partial_link_text("jobs").click()
+    browser.find_element_by_partial_link_text("Jobs").click()
     browser.find_element_by_name('username').send_keys(user1.username)
     browser.find_element_by_name('password').send_keys('1234')
     browser.find_element_by_css_selector("button[type='submit']").click()
 
-    browser.find_element_by_partial_link_text("tasks").click()
+    browser.find_element_by_partial_link_text("Tasks").click()
     found_titles = {el.text for el in browser.find_elements_by_css_selector(
         '.entry-title a')}
     expected_titles = {t.title for t in (task1, task2)}

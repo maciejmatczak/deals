@@ -47,16 +47,6 @@ deals = [
 ]*2
 
 
-def home(request):
-    if request.user.is_authenticated:
-        context = {
-            'deals': deals
-        }
-        return render(request, 'scraper/home.html', context=context)
-    else:
-        return render(request, 'scraper/home_empty.html')
-
-
 def test_site(request):
     context = {
         'deals': deals
@@ -188,6 +178,25 @@ class ScrapingJobDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
 class Diff(NamedTuple):
     data: str
     status: str
+
+
+@login_required
+def job_table(request):
+    user = request.user
+
+    all_jobs = ScrapingJob.objects.filter(user=user).order_by('url')
+
+    paginator = Paginator(all_jobs, 20)
+    page = request.GET.get('page')
+    jobs = paginator.get_page(page)
+
+    context = {
+        'is_paginated': True,
+        'page_obj': jobs,
+        'jobs': jobs,
+    }
+
+    return render(request, 'scraper/scrapingjob_table.html', context=context)
 
 
 @login_required

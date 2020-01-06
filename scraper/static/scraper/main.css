@@ -64,6 +64,10 @@ body {
   margin-top: 1rem;
 }
 
+.table .thead-dark th {
+  background-color: #343a40;
+}
+
 table.table-fit {
   width: auto !important;
   table-layout: auto !important;
@@ -77,6 +81,6 @@ table.table-fit tfoot td {
   width: auto !important;
 }
 
-.breake-all {
+.break-all {
   word-break: break-all;
 }

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (home, ScrapingJobListView, ScrapingJobDetailView,
+from .views import (job_table, ScrapingJobListView, ScrapingJobDetailView,
                     ScrapingJobCreateView, ScrapingJobUpdateView,
                     ScrapingJobDeleteView, scraping_job_test_run, test_site,
                     ScrapingTaskListView, ScrapingTaskDetailView,
@@ -10,7 +10,7 @@ from .views import (home, ScrapingJobListView, ScrapingJobDetailView,
 urlpatterns = [
     path('', item_list, name='scrapeditems'),
     path('test-site/', test_site, name='scraper-testsite'),
-    path('jobs/', ScrapingJobListView.as_view(), name='scrapingjobs'),
+    path('jobs/', job_table, name='scrapingjobs'),
     path('job/<int:pk>/', ScrapingJobDetailView.as_view(),
          name='scrapingjob-detail'),
     path('job/<int:pk>/testrun/',
