@@ -18,7 +18,7 @@ CACHE_DIR = Path(__file__).parent / 'data' / 'cache_dir'
 
 def test_css_selector_validator():
     with raises(ValidationError):
-        validate_css_selector('|_|_')
+        validate_css_selector('|_|sdaf;;_')
 
 
 def test_file_path_validator(tmp_path):
