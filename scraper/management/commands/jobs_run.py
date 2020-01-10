@@ -90,19 +90,23 @@ class Command(BaseCommand):
 
             save_count = 0
             for result in results:
-                identifier = result['identifier']
+                # identifier = result['identifier']
 
-                data = yaml.dump(result, default_flow_style=False,
-                                 allow_unicode=True)
+                # data = yaml.dump(result, default_flow_style=False,
+                #                  allow_unicode=True)
 
-                item, _ = Item.objects.get_or_create(
-                    identifier=identifier,
-                    scraping_job=scraping_job
-                )
+                # item, _ = Item.objects.get_or_create(
+                #     identifier=identifier,
+                #     scraping_job=scraping_job
+                # )
 
-                _, created = ItemState.objects.get_or_create(
-                    item=item,
-                    data=data
+                # _, created = ItemState.objects.get_or_create(
+                #     item=item,
+                #     data=data
+                # )
+                created = ItemState.register(
+                    scraping_job=scraping_job,
+                    scrapped_data=result
                 )
                 if created:
                     save_count += 1

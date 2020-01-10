@@ -93,8 +93,8 @@ class ItemState(models.Model):
     class Meta:
         ordering = ['-date_found']
 
-    data = models.TextField(blank=False, validators=[validate_yaml])
     date_found = models.DateTimeField(auto_now_add=True)
+    data = models.TextField(blank=False, validators=[validate_yaml])
 
     item = models.ForeignKey(
         Item, on_delete=models.SET_NULL, null=True)
@@ -115,7 +115,7 @@ class ItemState(models.Model):
         # scrapped data will consist characteristic items, as well as
         # some standard one
 
-        identifier = scrapped_data['identifier']
+        identifier = scrapped_data.pop('identifier')
         image = scrapped_data.pop('image', None)
 
         item, _ = Item.objects.get_or_create(
@@ -123,9 +123,11 @@ class ItemState(models.Model):
             scraping_job=scraping_job
         )
 
-        _, created = cls.get_or_create(
+        _, created = cls.objects.get_or_create(
+            url=url,
             item=item,
-            data=scrapped_data
+            data=yaml.dump(scrapped_data, default_flow_style=False,
+                           allow_unicode=True)
         )
 
         return created
