@@ -7,3 +7,4 @@ lxml
 python-dotenv
 pyyaml
 selenium
+croniter~=0.3.31
