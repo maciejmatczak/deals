@@ -124,7 +124,6 @@ class ItemState(models.Model):
         )
 
         _, created = cls.objects.get_or_create(
-            url=url,
             item=item,
             data=yaml.dump(scrapped_data, default_flow_style=False,
                            allow_unicode=True)
