@@ -15,6 +15,7 @@ from django.views.generic import (
 )
 import yaml
 from typing import NamedTuple
+from random import random
 
 from .item_scraper import item_scraper
 from .item_scraper.validators import ValidationError as ScrapTaskValidationError
@@ -22,32 +23,30 @@ from .forms import ScrapingJobForm
 from .models import ScrapingJob, ScrapingTask, Item
 
 
-from random import random
-deals = [
-    {
-        'title': 'Szorty kąpielowe',
-        'price': f'{random()*20:.2f}',
-        'date_found': '2018-12-01'
-    },
-    {
-        'title': 'Super Blouse',
-        'price': '29.99',
-        'date_found': '2018-11-04'
-    },
-    {
-        'title': 'Super gacie',
-        'price': '9.99',
-        'date_found': '2018-12-05'
-    },
-    {
-        'title': 'Super onesie',
-        'price': '129.99',
-        'date_found': '2018-12-04'
-    },
-]*2
-
-
 def test_site(request):
+    deals = [
+        {
+            'title': 'Szorty kąpielowe',
+            'price': f'{random()*20:.2f}',
+            'date_found': '2018-12-01'
+        },
+        {
+            'title': 'Super Blouse',
+            'price': '29.99',
+            'date_found': '2018-11-04'
+        },
+        {
+            'title': 'Super gacie',
+            'price': '9.99',
+            'date_found': '2018-12-05'
+        },
+        {
+            'title': 'Super onesie',
+            'price': '129.99',
+            'date_found': '2018-12-04'
+        },
+    ]*2
+
     context = {
         'deals': deals
     }
