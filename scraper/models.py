@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from croniter import croniter
 from datetime import datetime
 from solo.models import SingletonModel
 import yaml
@@ -15,6 +16,15 @@ def validate_yaml(value):
         yaml.safe_load(value)
     except yaml.YAMLError as exception:
         raise ValidationError('Field is not a proper yaml: %(exception)s',
+                              params={'exception': exception}
+                              )
+
+
+def validate_cron(value: str):
+    try:
+        croniter(value)
+    except Exception as exception:
+        raise ValidationError('Cron validation error: %(exception)s',
                               params={'exception': exception}
                               )
 
@@ -40,6 +50,8 @@ class ScrapingJob(models.Model):
     description = models.TextField(blank=True)
     running_time = models.TimeField(blank=False)
     was_run_today = models.BooleanField(default=False, blank=False)
+    cron = models.TextField(blank=False, validators=[
+                            validate_cron], default='0 9 */1 * *')
 
     scraping_task = models.ForeignKey(
         ScrapingTask, on_delete=models.SET_NULL, null=True)
@@ -85,7 +97,7 @@ class ScrapingJobLog(models.Model):
 
 
 class JobRunner(SingletonModel):
-    last_run = models.DateTimeField(default=datetime.utcnow())
+    last_run = models.DateTimeField(default=datetime.utcnow)
 
     class Meta:
         verbose_name = "Job runner"

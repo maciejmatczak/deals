@@ -12,11 +12,13 @@ class ScrapingJobForm(forms.ModelForm):
             'active',
             'scraping_task',
             'running_time',
+            'cron',
             'description'
         ]
 
         widgets = {
             'description': forms.Textarea(attrs={'rows': 2}),
+            'cron': forms.Textarea(attrs={'rows': 1}),
         }
 
     def __init__(self, *args, **kwargs):
