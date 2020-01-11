@@ -84,7 +84,9 @@ class ScrapingJobLog(models.Model):
 
 class Item(models.Model):
     identifier = models.TextField(blank=False, default='')
+    url = models.URLField(blank=False)
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     scraping_job = models.ForeignKey(
         ScrapingJob, on_delete=models.SET_NULL, null=True)
 
@@ -111,22 +113,29 @@ class ItemState(models.Model):
         return data
 
     @classmethod
-    def register(cls, scraping_job, scrapped_data):
+    def register(cls, scraping_job, scrapped_data, job_url):
         # scrapped data will consist characteristic items, as well as
         # some standard one
 
         identifier = scrapped_data.pop('identifier')
+        url = scrapped_data.pop('url', None) or job_url
         image = scrapped_data.pop('image', None)
 
-        item, _ = Item.objects.get_or_create(
+        item, _ = Item.objects.update_or_create(
             identifier=identifier,
-            scraping_job=scraping_job
+            scraping_job=scraping_job,
+            user=scraping_job.user,
+            defaults={'url': url}
         )
 
-        _, created = cls.objects.get_or_create(
-            item=item,
-            data=yaml.dump(scrapped_data, default_flow_style=False,
-                           allow_unicode=True)
-        )
+        newest_state = cls.objects.order_by('-date_found').first()
+        if not newest_state or newest_state.data_as_dict() != scrapped_data:
+            _, created = cls.objects.get_or_create(
+                item=item,
+                data=yaml.dump(scrapped_data, default_flow_style=False,
+                               allow_unicode=True)
+            )
+        else:
+            created = False
 
         return created

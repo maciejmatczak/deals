@@ -106,7 +106,8 @@ class Command(BaseCommand):
                 # )
                 created = ItemState.register(
                     scraping_job=scraping_job,
-                    scrapped_data=result
+                    scrapped_data=result,
+                    job_url=scraping_job.url
                 )
                 if created:
                     save_count += 1
