@@ -2,6 +2,7 @@ ansible
 cssselect
 django~=2.2.7
 django-crispy-forms
+django-solo
 gunicorn
 lxml
 python-dotenv

@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from datetime import datetime
+from solo.models import SingletonModel
 import yaml
 from enum import Enum
 
@@ -80,6 +82,13 @@ class ScrapingJobLog(models.Model):
 
     def __str__(self):
         return f'{self.id}: {self.result} @ {self.scraping_job}'
+
+
+class JobRunner(SingletonModel):
+    last_run = models.DateTimeField(default=datetime.utcnow())
+
+    class Meta:
+        verbose_name = "Job runner"
 
 
 class Item(models.Model):
