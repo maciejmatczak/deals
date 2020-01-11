@@ -84,3 +84,21 @@ table.table-fit tfoot td {
 .break-all {
   word-break: break-all;
 }
+
+@media (max-width: 768px) {
+  .table tr {
+    display: table;
+    width: 100%;
+  }
+
+  .table td,
+  .table th {
+    width: 100%;
+    display: block;
+    border: 0;
+  }
+}
+
+pre {
+  margin-bottom: 0;
+}
