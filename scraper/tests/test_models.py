@@ -15,7 +15,7 @@ def test_scraping_job(user, scraping_task):
     task = ScrapingJob(
         url='http://example.com',
         scraping_task=scraping_task,
-        running_time='10:00',
+        cron='0 0 */1 * *',
         user=user
     )
 
@@ -29,4 +29,5 @@ def test_scraping_jobs_for_user(user_factory, scraping_job_factory):
     scraping_job_factory.create(user=user)
     scraping_job_factory.create(user=user)
 
-    assert ScrapingJob.objects.filter(user=user).count() == 2, ScrapingJob.objects.count()
+    assert ScrapingJob.objects.filter(
+        user=user).count() == 2, ScrapingJob.objects.count()
