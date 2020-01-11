@@ -48,8 +48,6 @@ class ScrapingJob(models.Model):
     url = models.URLField(max_length=600, blank=False)
     active = models.BooleanField(default=True, blank=False)
     description = models.TextField(blank=True)
-    running_time = models.TimeField(blank=False)
-    was_run_today = models.BooleanField(default=False, blank=False)
     cron = models.TextField(blank=False, validators=[
                             validate_cron], default='0 9 */1 * *')
 

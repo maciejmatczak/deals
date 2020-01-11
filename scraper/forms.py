@@ -11,7 +11,6 @@ class ScrapingJobForm(forms.ModelForm):
             'url',
             'active',
             'scraping_task',
-            'running_time',
             'cron',
             'description'
         ]

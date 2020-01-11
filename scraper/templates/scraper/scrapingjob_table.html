@@ -12,7 +12,7 @@
         <tr>
           <th>URL</th>
           <th>Active</th>
-          <th>Run time</th>
+          <th>CRON</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -27,7 +27,7 @@
             {% endif %}
           </td>
           <td>
-            {{ job.running_time | time:"H:i:s" }}
+            <pre><code class="nohighlight">{{ job.cron }}</code></pre>
           </td>
           <td>
             <a href="{% url 'scrapingjob-detail' pk=job.id %}" class="pr-2">
