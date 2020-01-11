@@ -8,5 +8,3 @@ admin.site.register(ScrapingJobLog)
 admin.site.register(Item)
 admin.site.register(ItemState)
 admin.site.register(JobRunner, SingletonModelAdmin)
-
-job_runner = JobRunner.get_solo()
