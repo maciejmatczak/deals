@@ -4,11 +4,11 @@
     virtualenv: "{{ ansistrano_shared_path }}/venv"
     requirements: "{{ ansistrano_release_path.stdout }}/requirements.txt"
 
-- name: Django makemigrations
-  django_manage:
-    app_path: "{{ ansistrano_release_path.stdout }}"
-    virtualenv: "{{ ansistrano_shared_path }}/venv"
-    command: makemigrations
+# - name: Django makemigrations
+#   django_manage:
+#     app_path: "{{ ansistrano_release_path.stdout }}"
+#     virtualenv: "{{ ansistrano_shared_path }}/venv"
+#     command: makemigrations
 
 - name: Django migrate
   django_manage:
