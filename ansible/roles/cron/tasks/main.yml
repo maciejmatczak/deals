@@ -9,3 +9,4 @@
     name: "scrap job resetter"
     special_time: "daily"
     job: "{{ ansistrano_shared_path }}/venv/bin/python {{ ansistrano_release_path.stdout }}/manage.py jobs_reset | logger -t 'SCRAP JOB RESET'"
+    state: absent
