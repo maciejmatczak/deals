@@ -72,3 +72,5 @@ def test_scrap(live_server):
     assert 'Super' in item['title']
     assert '99' in item['description']
     assert item['nonExistingField'] is None
+
+    assert type(item['image2']) == bytes
