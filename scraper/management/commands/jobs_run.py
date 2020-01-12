@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.core.management import call_command
-from datetime import datetime, time, timezone
+from django.utils import timezone
+from datetime import datetime
 from croniter import croniter
 import yaml
 
@@ -41,7 +42,7 @@ class Command(BaseCommand):
     help = 'Runs scrap routines for every user and registers new items'
 
     def handle(self, *args, **options):
-        now = datetime.now(timezone.utc)
+        now = timezone.localtime()
 
         job_runner = JobRunner.get_solo()
         last_run = job_runner.last_run
