@@ -2,13 +2,15 @@
 
 {% block content %}
   {% for item_data in items_data %}
-    <div class="media entry-section">
+    <div class="d-flex flex-column flex-md-row entry-section">
       {% if item_data.image %}
-        <img class="d-inline item-image mr-3"
-          src="{{ item_data.image.url }}" alt="">
+        <div class="text-center">
+          <img class="pull-left image-responsive item-image mr-md-3 mb-3 mb-md-0"
+            src="{{ item_data.image.url }}" alt="">
+        </div>
       {% endif %}
 
-      <div class="media-body">
+      <div>
         <div class="entry-header">
           <h5 class="entry-title">
             {{item_data.identifier}}
