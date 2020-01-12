@@ -85,17 +85,36 @@ table.table-fit tfoot td {
   word-break: break-all;
 }
 
-@media (max-width: 768px) {
-  .table tr {
+/* table-mobile
+  desktop view supports nowrap columns and one (?)
+  ellastic (with ellipsis) that gets rest of the area available
+  mobile changes display on mobile-inline elements to break the table
+*/
+@media all and (max-width: 768px) {
+  .table-mobile tr {
     display: table;
     width: 100%;
   }
 
-  .table td,
-  .table th {
+  .table-mobile td.mobile-inline {
     width: 100%;
-    display: block;
+    display: inline-block;
+  }
+
+  .table-mobile tr td {
     border: 0;
+  }
+}
+
+@media not all and (max-width: 768px) {
+  .table-mobile td.ellastic {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 1px;
+    width: 100%;
+  }
+  .table-mobile td {
+    white-space: nowrap;
   }
 }
 
