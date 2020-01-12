@@ -12,6 +12,7 @@
     ansistrano_shared_paths:
       - "venv"
       - "static"
+      - "media"
     ansistrano_keep_releases: 5
     ansistrano_deploy_via: rsync
     ansistrano_rsync_extra_params:
