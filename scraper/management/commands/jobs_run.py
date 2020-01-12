@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.core.management import call_command
 from datetime import datetime, time, timezone
 from croniter import croniter
 import yaml
@@ -127,3 +128,8 @@ class Command(BaseCommand):
                 scraping_job=scraping_job,
                 result=log_result
             )
+
+        self.stdout.write(
+            f'Running media cleanup'
+        )
+        call_command('cleanup_unused_media', interactive=False)

@@ -1,6 +1,7 @@
 chromedriver
 hosts
 *.retry
+media/*
 
 .vscode/*
 !.vscode/settings.json

@@ -49,6 +49,7 @@ body {
   color: #666666;
   padding: 0;
   margin: 0;
+  font-size: small;
 }
 
 .entry-metadata-element {
@@ -120,4 +121,9 @@ table.table-fit tfoot td {
 
 pre {
   margin-bottom: 0;
+}
+
+.item-image {
+  max-width: 100px;
+  max-height: 200px;
 }

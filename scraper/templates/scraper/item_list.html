@@ -2,15 +2,20 @@
 
 {% block content %}
   {% for item_data in items_data %}
-    <div class="entry-section">
-      <div class="entry-header">
-        <h5 class="entry-title">
-          {{item_data.identifier}}
-          <a href="{{item_data.url}}"><i class="fas fa-external-link-alt"></i></a>
-        </h5>
+    <div class="media entry-section">
+      {% if item_data.image %}
+        <img class="d-inline item-image mr-3"
+          src="{{ item_data.image.url }}" alt="">
+      {% endif %}
 
-        <div class="entry-metadata">
-          <div class="entry-metadata-element">
+      <div class="media-body">
+        <div class="entry-header">
+          <h5 class="entry-title">
+            {{item_data.identifier}}
+            <a href="{{item_data.url}}"><i class="fas fa-external-link-alt"></i></a>
+          </h5>
+
+          <div class="entry-metadata">
             <div class="d-lg-inline">
               Last update: {{ item_data.last_update|date:'Y-m-d H:i' }}
             </div>
@@ -30,31 +35,28 @@
             </div>
           </div>
         </div>
-      </div>
 
-    <div class="entry-content">
-      <div class="table-responsive">
-        <table class="table table-borderless table-sm table-hover table-fit">
-          <tr>
-            <th scope="row">Date found</th>
-            <td>{{ item_data.recent_history.current_date_found|date:'Y-m-d H:i' }}</td>
-            <td>{{ item_data.recent_history.older_date_found|date:'Y-m-d H:i' }}</td>
-          </tr>
-          {% for data in item_data.recent_history.rest %}
+        <div class="entry-content">
+          <table style="display: inline-table; vertical-align:top;" class="table table-borderless table-sm table-hover table-fit">
             <tr>
-              <th scope="row">{{ data.attribute }}</th>
-              <td>{% if data.attribute == "date_found" %}{{ data.current|date:'Y-m-d H:i' }}{% else %}{{ data.current }}{% endif %}</td>
-              {% if data.current == data.old %}
-              <td></td>
-              {% else %}
-              <td style="text-decoration: line-through;">{% if data.attribute == "date_found" %}{{ data.old|date:'Y-m-d H:i' }}{% else %}{{ data.old }}{% endif %}</td>
-              {% endif %}
+              <th scope="row">Date found</th>
+              <td>{{ item_data.recent_history.current_date_found|date:'Y-m-d H:i' }}</td>
+              <td>{{ item_data.recent_history.older_date_found|date:'Y-m-d H:i' }}</td>
             </tr>
-          {% endfor %}
-        </table>
+            {% for data in item_data.recent_history.rest %}
+              <tr>
+                <th scope="row">{{ data.attribute }}</th>
+                <td>{% if data.attribute == "date_found" %}{{ data.current|date:'Y-m-d H:i' }}{% else %}{{ data.current }}{% endif %}</td>
+                {% if data.current == data.old %}
+                <td></td>
+                {% else %}
+                <td style="text-decoration: line-through;">{% if data.attribute == "date_found" %}{{ data.old|date:'Y-m-d H:i' }}{% else %}{{ data.old }}{% endif %}</td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
       </div>
-    </div>
-
     </div>
   {% endfor %}
 

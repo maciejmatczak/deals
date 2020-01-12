@@ -256,6 +256,7 @@ def item_list(request):
         items_data.append({
             'identifier': item.identifier,
             'url': item.url,
+            'image': item.image,
             'last_update': item.latest_state_update,
             'last_run': item.scraping_job.last_log.date_run,
             'last_run_result': item.scraping_job.last_log.result,

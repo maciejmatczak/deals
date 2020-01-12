@@ -9,3 +9,4 @@ python-dotenv
 pyyaml
 selenium
 croniter~=0.3.31
+django-unused-media

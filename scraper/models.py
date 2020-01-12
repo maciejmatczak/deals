@@ -1,10 +1,12 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core import files
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from croniter import croniter
 from datetime import datetime
 from solo.models import SingletonModel
+from io import BytesIO
 import yaml
 from enum import Enum
 
@@ -104,6 +106,7 @@ class JobRunner(SingletonModel):
 class Item(models.Model):
     identifier = models.TextField(blank=False, default='')
     url = models.URLField(blank=False)
+    image = models.ImageField(upload_to='items', blank=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     scraping_job = models.ForeignKey(
@@ -146,6 +149,10 @@ class ItemState(models.Model):
             user=scraping_job.user,
             defaults={'url': url}
         )
+
+        if image and type(image) == bytes:
+            item.image.save(f'{identifier}.png', BytesIO(image))
+            item.save()
 
         newest_state = cls.objects.order_by('-date_found').first()
         if not newest_state or newest_state.data_as_dict() != scrapped_data:
