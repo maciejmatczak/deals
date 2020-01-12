@@ -5,6 +5,9 @@ server {
     location /static/ {
         root /home/{{ ansible_ssh_user }}/deployed/{{ app_name }}/shared;
     }
+    location /media/ {
+        root /home/{{ ansible_ssh_user }}/deployed/{{ app_name }}/shared;
+    }
 
     location / {
         include proxy_params;
