@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import string
 from pathlib import Path
-from urllib.request import urlopen, HTTPError
+from urllib.request import Request, urlopen, HTTPError
 
 
 def format_filename(s):
@@ -13,7 +13,8 @@ def format_filename(s):
     return filename
 
 
-def download_page(url, chromedriver_path, cache_dir=None, use_cache=False, endless_page=True):
+def download_page(url, chromedriver_path, cache_dir=None, use_cache=False,
+                  endless_page=True, user_agent=None):
     page_source = None
 
     if cache_dir:
@@ -30,24 +31,33 @@ def download_page(url, chromedriver_path, cache_dir=None, use_cache=False, endle
                 pass
 
     if not page_source:
+        request = Request(
+            url,
+            data=None,
+            headers={
+                'User-Agent': user_agent
+            }
+        )
+        urlopen(url)
+
         options = Options()
         options.add_argument('--headless')
         options.add_argument('--window-size=1920x1080')
         options.add_argument('--disable-gui')
 
+        if user_agent:
+            options.add_argument(f'user-agent={user_agent}')
+
         driver = webdriver.Chrome(chromedriver_path, options=options)
         driver.implicitly_wait(1)
+
+        driver.get(url)
 
         if endless_page:
             for _ in range(5):
                 driver.execute_script(
                     "window.scrollTo(0, document.body.scrollHeight);")
                 driver.implicitly_wait(2)
-
-        urlopen(url)
-
-        driver.get(url)
-
         page_source = driver.page_source
 
         if cache_dir:

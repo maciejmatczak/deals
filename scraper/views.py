@@ -280,7 +280,8 @@ def scraping_job_test_run(request, pk):
         results, page_source = item_scraper.scrap(
             url=scraping_job.url,
             task=task,
-            chromedriver_path=settings.SCRAPER_CHROMEDRIVER_PATH
+            chromedriver_path=settings.SCRAPER_CHROMEDRIVER_PATH,
+            user_agent=settings.SCRAPER_USER_AGENT
         )
     except ScrapTaskValidationError as exception:
         messages.warning(request, str(exception))

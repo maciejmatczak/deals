@@ -9,7 +9,8 @@ from .validators import validate_task, validate_file_path, ValidationError
 SPACES = re.compile(r'\s')
 
 
-def scrap(url, task, chromedriver_path, cache_dir=None, use_cache=False, endless_page=True):
+def scrap(url, task, chromedriver_path, cache_dir=None, use_cache=False,
+          endless_page=True, user_agent=None):
     validate_task(task)
 
     try:
@@ -26,6 +27,7 @@ def scrap(url, task, chromedriver_path, cache_dir=None, use_cache=False, endless
         cache_dir=cache_dir,
         use_cache=use_cache,
         endless_page=endless_page,
+        user_agent=user_agent,
     )
 
     data = parse(page_source, task)
