@@ -45,7 +45,8 @@ class Command(BaseCommand):
         now = timezone.localtime()
 
         job_runner = JobRunner.get_solo()
-        last_run = job_runner.last_run
+        last_run = job_runner.last_run.astimezone(
+            timezone.get_current_timezone())
 
         job_runner.last_run = now
         job_runner.save()
