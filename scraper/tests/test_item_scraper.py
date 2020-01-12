@@ -4,7 +4,9 @@ import yaml
 from io import StringIO
 from textwrap import dedent
 
-from scraper.item_scraper.item_scraper import parse
+from django.conf import settings
+
+from scraper.item_scraper.item_scraper import scrap
 from scraper.item_scraper.validators import (
     ValidationError,
     validate_css_selector,
@@ -42,25 +44,31 @@ def test_task_validator():
         validate_task(task)
 
 
-def test_parse():
-    task = {
-        'item': 'div.card',
-        'extract': {
-            'image': 'img.card-img-top|src',
-            'title': '.card-title|text',
-            'description': 'p.card-text|text',
-            'nonExistingField': 'p.blabla|text',
-        }
-    }
+def test_scrap(live_server):
+    # adding ugly dependency to launched django app, testing on test-site,
+    # since scrapper is selenium only
 
-    page_source = (CACHE_DIR / 'https___deals_ellox_science_').read_text()
+    task = yaml.safe_load(StringIO(dedent('''\
+        item: div.card
+        extract:
+            identifier: .card-title|text
+            image: img.card-img-top|src
+            image2: img.card-img-top|screenshot
+            title: .card-title|text
+            description: p.card-text|text
+            nonExistingField: p.blabla|text
+    ''')))
 
-    data = parse(page_source, task)
+    data, page_source = scrap(
+        f'{live_server.url}/test-site', task,
+        settings.SCRAPER_CHROMEDRIVER_PATH,
+        endless_page=False)
 
     assert data
-    assert len(data) == 8
-    for item in data:
-        assert item['image'] == '/static/generic.jpg'
-        assert 'Super' in item['title']
-        assert '99' in item['description']
-        assert item['nonExistingField'] is None
+    assert len(data) == 8, page_source
+
+    item = data[1]
+    assert item['image'].endswith('/static/generic.jpg')
+    assert 'Super' in item['title']
+    assert '99' in item['description']
+    assert item['nonExistingField'] is None

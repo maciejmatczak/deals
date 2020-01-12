@@ -7,7 +7,7 @@ import yaml
 from scraper.models import (
     ScrapingJob, ScrapingJobLog, ResultChoice, Item, ItemState, JobRunner)
 from scraper.item_scraper import item_scraper
-from scraper.item_scraper.page_downloader import (
+from scraper.item_scraper.item_scraper import (
     HTTPError
 )
 from scraper.item_scraper.validators import (

@@ -1,16 +1,18 @@
 from lxml import html
 from io import StringIO
 import re
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from urllib.request import Request, urlopen, HTTPError
 
-from .page_downloader import download_page
+# from .page_downloader import download_page, download_and_scrap_page
 from .validators import validate_task, validate_file_path, ValidationError
 
 
 SPACES = re.compile(r'\s')
 
 
-def scrap(url, task, chromedriver_path, cache_dir=None, use_cache=False,
-          endless_page=True, user_agent=None):
+def scrap(url, task, chromedriver_path, endless_page=True, user_agent=None):
     validate_task(task)
 
     try:
@@ -21,45 +23,83 @@ def scrap(url, task, chromedriver_path, cache_dir=None, use_cache=False,
             f'{error}'
         )
 
-    page_source = download_page(
-        url,
-        chromedriver_path,
-        cache_dir=cache_dir,
-        use_cache=use_cache,
-        endless_page=endless_page,
-        user_agent=user_agent,
-    )
+    check_page_accessibility(url, user_agent=user_agent)
 
-    data = parse(page_source, task)
+    driver = setup_chrome_driver(chromedriver_path, user_agent)
+
+    driver.get(url)
+    driver.implicitly_wait(1)
+
+    if endless_page:
+        for _ in range(5):
+            driver.execute_script(
+                "window.scrollTo(0, document.body.scrollHeight);")
+            driver.implicitly_wait(1)
+
+    page_source = driver.page_source
+
+    data = parse(driver, task)
 
     return data, page_source
 
 
-def parse(page_source, task):
-    # htmlparser = etree.HTMLParser()
-    # tree = etree.parse(StringIO(page_source), htmlparser)
-    tree = html.parse(StringIO(page_source))
+def check_page_accessibility(url, user_agent=None):
+    # checking up before real run if page exists at all and is accessible
+    if user_agent:
+        header = {
+            'User-Agent': user_agent
+        }
+    else:
+        header = {}
 
+    request = Request(
+        url,
+        data=None,
+        headers=header
+    )
+
+    urlopen(request)
+
+
+def setup_chrome_driver(chromedriver_path, user_agent):
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--window-size=1920x1080')
+    options.add_argument('--disable-gui')
+
+    if user_agent:
+        options.add_argument(f'user-agent={user_agent}')
+
+    driver = webdriver.Chrome(chromedriver_path, options=options)
+
+    return driver
+
+
+SPACES = re.compile(r'\s')
+
+
+def parse(driver, task):
     data = []
-    for item in tree.getroot().cssselect(task['item']):
-        # print('\n\nNew Item:')
-        # print(etree.tostring(item, pretty_print=True, method='html', encoding='unicode'))
+    for item in driver.find_elements_by_css_selector(task['item']):
+
         sub_data = {}
 
         for field, expr_method in task['extract'].items():
             expr, method = expr_method.split('|')
-            r = item.cssselect(expr)
+            r = item.find_elements_by_css_selector(expr)
 
             if len(r) > 0:
                 if method == 'text':
                     # text = r[0].text_content()
-                    text = ' '.join(r.text_content() for r in r)
+                    text = ' '.join(r.text for r in r)
                     cleaned_text = ' '.join(
                         el for el in SPACES.split(text) if el)
 
                     sub_data[field] = cleaned_text
+                elif method == 'screenshot':
+                    sub_data[field] = r[0].screenshot_as_png
                 else:
-                    sub_data[field] = r[0].attrib.get(method)
+                    sub_data[field] = r[0].get_attribute(method)
             else:
                 sub_data[field] = None
 
