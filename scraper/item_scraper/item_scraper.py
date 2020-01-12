@@ -97,6 +97,8 @@ def parse(driver, task):
 
                     sub_data[field] = cleaned_text
                 elif method == 'screenshot':
+                    driver.execute_script(
+                        "arguments[0].scrollIntoView();", r[0])
                     sub_data[field] = r[0].screenshot_as_png
                 else:
                     sub_data[field] = r[0].get_attribute(method)
