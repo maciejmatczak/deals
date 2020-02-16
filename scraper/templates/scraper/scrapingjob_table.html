@@ -18,7 +18,10 @@
       </thead>
       {% for job in jobs %}
         <tr>
-          <td class="ellastic break-all" style="direction: rtl; text-align: left;">{{ job.url }}</td>
+          <td class="ellastic break-all" style="direction: rtl; text-align: left;">
+            <a href="{{ job.url }}" class="ml-1"><i class="fas fa-external-link-alt"></i></a>
+            {{ job.url }}
+          </td>
           <td class="text-right mobile-inline">
             {% if job.active %}
               <i class="fas fa-toggle-on"></i>
