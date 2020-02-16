@@ -3,8 +3,8 @@
   vars:
     app_name: "{{ playbook_dir | dirname | basename }}"
     domain_list:
-      - "deals.ellox.science"
-      - "www.deals.ellox.science"
+      - "scraper.ellox.science"
+      - "www.scraper.ellox.science"
     certbot_admin_email: "maciek.matczak@gmail.com"
     certbot_domain_list: "{{ domain_list }}"
     nginx_domain_list: "{{ domain_list }}"
