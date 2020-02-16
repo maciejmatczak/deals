@@ -4,6 +4,10 @@ body {
   margin-top: 5rem;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 .alert {
   border: 1px solid #dddddd;
 }
@@ -27,6 +31,7 @@ body {
 .entry-header {
   border-bottom: 1px solid #dddddd;
   margin-bottom: 0.8rem;
+  padding-bottom: 0.2rem;
 }
 
 .entry-title {
@@ -39,10 +44,13 @@ body {
   color: #666666;
 }
 
-.entry-title a:hover,
 .entry-title a:link,
 .entry-title a:visited {
   color: #666666;
+}
+
+.entry-title a:hover {
+  color: #999999;
 }
 
 .entry-metadata {
