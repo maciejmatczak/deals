@@ -9,11 +9,11 @@
     <div class="entry-section">
       <div class="entry-header">
         <h5 class="entry-title">
-          <a href="{% url 'scrapingtask-update' pk=task.id %}" class="pr-2">
+          <a href="{% url 'scrapingtask-update' pk=task.id %}" class="pr-1">
             {{ task.title }}
             <i class="fas fa-pen pl-2"></i>
           </a>
-          <a href="{% url 'scrapingtask-delete' pk=task.id %}">
+          <a href="{% url 'scrapingtask-delete' pk=task.id %}" class="pl-1 hover-danger">
             <i class="fas fa-trash"></i>
           </a>
         </h5>

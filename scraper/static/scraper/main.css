@@ -8,6 +8,10 @@ a:hover {
   text-decoration: none;
 }
 
+*:hover.hover-danger {
+  color: #dc3545 !important;
+}
+
 .alert {
   border: 1px solid #dddddd;
 }
