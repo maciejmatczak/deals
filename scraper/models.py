@@ -53,6 +53,8 @@ class ScrapingJob(models.Model):
     cron = models.TextField(blank=False, validators=[
                             validate_cron], default='0 9 */1 * *')
 
+    mail_me = models.BooleanField(default=False)
+
     scraping_task = models.ForeignKey(
         ScrapingTask, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
