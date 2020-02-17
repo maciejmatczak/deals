@@ -11,9 +11,10 @@
       <thead class="thead-dark">
         <tr>
           <th>URL</th>
-          <th>Active</th>
-          <th>CRON</th>
-          <th>Actions</th>
+          <th><i class="fas fa-power-off"></i></th>
+          <th><i class="fas fa-envelope"></i></th>
+          <th><i class="fas fa-clock"></th>
+          <th><i class="fas fa-cogs"></th>
         </tr>
       </thead>
       {% for job in jobs %}
@@ -27,6 +28,13 @@
               <i class="fas fa-toggle-on"></i>
             {% else %}
               <i class="fas fa-toggle-off"></i>
+            {% endif %}
+          </td>
+          <td class="text-right mobile-inline">
+            {% if job.mail_me %}
+              <i class="fas fa-paper-plane"></i>
+            {% else %}
+              <i class="far fa-paper-plane text-muted"></i>
             {% endif %}
           </td>
           <td class="text-right mobile-inline">
