@@ -10,6 +10,7 @@ class ScrapingJobForm(forms.ModelForm):
         fields = [
             'url',
             'active',
+            'mail_me',
             'scraping_task',
             'cron',
             'description'
