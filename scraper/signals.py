@@ -46,6 +46,6 @@ Found awesome stuff Today:
         f'Scrapped new items: {date_found}',
         msg_plain,
         'noreply@scraper.ellox.science',
-        ['some@receiver.com'],
+        [user.email],
         html_message=msg_html
     )
