@@ -1,7 +1,8 @@
+from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, get_template
 from textwrap import dedent
 
 from .models import ItemState
@@ -28,24 +29,24 @@ Found awesome stuff Today:
 {data}
     ''')
 
-    msg_html = dedent(f'''\
-Hi {user}!
+    try:
+        site_url = settings.ALLOWED_HOSTS[0]
+    except IndexError:
+        site_url = ''
 
-Found awesome stuff Today:
-
-{instance.item.identifier}
-
-<img src="{"https://scraper.ellox.science/media" + str(instance.item.image)}" alt="{instance.item.identifier}"/>
-
-<a href="{instance.item.url}">Check it out!</a>
-
-{data}
-    ''')
+    html_template = get_template('scraper/email_new_item.html')
+    html_message = html_template.render(
+        context={
+            'user': user,
+            'item': instance.item,
+            'site_url': site_url
+        }
+    )
 
     send_mail(
         f'Scrapped new items: {date_found}',
         msg_plain,
-        'noreply@scraper.ellox.science',
+        'Scraper <noreply@scraper.ellox.science>',
         [user.email],
-        html_message=msg_html
+        html_message=html_message
     )
