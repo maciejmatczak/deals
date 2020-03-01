@@ -5,10 +5,11 @@ from .views import (job_table, ScrapingJobListView, ScrapingJobDetailView,
                     ScrapingJobDeleteView, scraping_job_test_run, test_site,
                     ScrapingTaskListView, ScrapingTaskDetailView,
                     ScrapingTaskCreateView, ScrapingTaskUpdateView,
-                    ScrapingTaskDeleteView, item_list)
+                    ScrapingTaskDeleteView, item_list, item_image)
 
 urlpatterns = [
     path('', item_list, name='scrapeditems'),
+    path('item/<int:pk>/image/', item_image, name='item-image'),
     path('test-site/', test_site, name='scraper-testsite'),
     path('jobs/', job_table, name='scrapingjobs'),
     path('job/<int:pk>/', ScrapingJobDetailView.as_view(),

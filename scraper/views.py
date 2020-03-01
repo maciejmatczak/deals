@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.views.generic import (
     ListView,
     DetailView,
@@ -297,3 +297,14 @@ def scraping_job_test_run(request, pk):
         'results': result_yamled,
     }
     return render(request, 'scraper/scrapingjob_test_run.html', context=context)
+
+
+@login_required
+def item_image(request, pk):
+    user = request.user
+
+    item = get_object_or_404(Item, pk=pk, user=user)
+
+    image_data = item.image.open().read()
+
+    return HttpResponse(image_data, content_type="image/png")
