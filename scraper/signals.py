@@ -10,12 +10,11 @@ from .models import ItemState
 
 @receiver(post_save, sender=ItemState)
 def new_state_sends_mail(sender, instance, **kwargs):
-    # TODO: create proper templates
-    # msg_plain = render_to_string('templates/email.txt', {'some_params': some_params})
-    # msg_html = render_to_string('templates/email.html', {'some_params': some_params})
     user = instance.item.user
     date_found = instance.date_found
     data = instance.data
+
+    recent_history = instance.item.recent_history()
 
     msg_plain = dedent(f'''\
 Hi {user}!
@@ -39,7 +38,9 @@ Found awesome stuff Today:
         context={
             'user': user,
             'item': instance.item,
-            'site_url': site_url
+            'recent_history': recent_history,
+            'site_url': site_url,
+            'data': data
         }
     )
 
