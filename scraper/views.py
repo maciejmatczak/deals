@@ -24,7 +24,7 @@ from .models import ScrapingJob, ScrapingTask, Item
 
 
 def test_site(request):
-    deals = [
+    deals_init = [
         {
             'title': 'Szorty kąpielowe',
             'price': f'{random()*20:.2f}',
@@ -45,7 +45,15 @@ def test_site(request):
             'price': '129.99',
             'date_found': '2018-12-04'
         },
-    ]*2
+    ]
+
+    deals = []
+    for d in deals_init:
+        deals.append(d)
+        d['title'] = d['title'] + ' - 2'
+        deals.append(d)
+        d['title'] = d['title'] + ' - 3'
+        deals.append(d)
 
     context = {
         'deals': deals
