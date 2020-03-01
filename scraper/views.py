@@ -156,6 +156,7 @@ class ScrapingJobCreateView(LoginRequiredMixin, CreateView):
 class ScrapingJobUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = ScrapingJob
     form_class = ScrapingJobForm
+    success_url = '/jobs/'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -168,7 +169,7 @@ class ScrapingJobUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
 
 class ScrapingJobDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = ScrapingJob
-    success_url = '/scraping-jobs/'
+    success_url = '/jobs/'
 
     def test_func(self):
         return test_request_vs_object_user(self)
