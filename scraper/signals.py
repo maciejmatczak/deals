@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from email.mime.image import MIMEImage
 from django.template.loader import render_to_string, get_template
 from textwrap import dedent
 
@@ -44,10 +45,18 @@ Found awesome stuff Today:
         }
     )
 
-    send_mail(
+    email = EmailMultiAlternatives(
         f'Scrapped new items: {date_found}',
         msg_plain,
         'Scraper <noreply@scraper.ellox.science>',
         [user.email],
-        html_message=html_message
     )
+
+    email.attach_alternative(html_message, 'text/html')
+
+    with open(instance.item.image.path, 'rb') as img:
+        mime_img = MIMEImage(img.read())
+    mime_img.add_header('Content-ID', '<image>')
+    email.attach(mime_img)
+
+    email.send()
