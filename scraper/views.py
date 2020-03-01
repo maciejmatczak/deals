@@ -213,45 +213,7 @@ def item_list(request):
     items_data = []
 
     for item in items:
-        last_two_states = item.itemstate_set.order_by('-date_found')[0:2]
-        combined_keys = set()
-        for state in last_two_states:
-            data = state.data_as_dict()
-            combined_keys |= set(k for k in data.keys() if data[k])
-        combined_keys = sorted(combined_keys)
-
-        if len(last_two_states) == 2:
-            current_state, older_state = last_two_states
-        elif len(last_two_states) == 1:
-            current_state, older_state = last_two_states[0], None
-        else:
-            continue
-
-        if older_state:
-            older_date_found = older_state.date_found
-        else:
-            older_date_found = ''
-
-        recent_history = {
-            'current_date_found': current_state.date_found,
-            'older_date_found': older_date_found,
-            'rest': []
-        }
-
-        for key in combined_keys:
-            current_value = current_state.data_as_dict().get(key, '')
-            if older_state:
-                older_value = older_state.data_as_dict().get(key, '')
-            else:
-                older_value = ''
-
-            recent_history['rest'].append(
-                {
-                    'attribute': key,
-                    'current': current_value,
-                    'old': older_value
-                }
-            )
+        recent_history = item.recent_history()
 
         items_data.append({
             'identifier': item.identifier,
