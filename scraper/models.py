@@ -114,6 +114,53 @@ class Item(models.Model):
     scraping_job = models.ForeignKey(
         ScrapingJob, on_delete=models.SET_NULL, null=True)
 
+    def get_absolute_image_url(self):
+        return reverse('item-image', kwargs={'pk': self.pk})
+
+    def recent_history(self):
+        last_two_states = self.itemstate_set.order_by('-date_found')[0:2]
+
+        if len(last_two_states) == 2:
+            newer_state, older_state = last_two_states
+        elif len(last_two_states) == 1:
+            newer_state, older_state = last_two_states[0], None
+        else:
+            return None
+
+        combined_keys = set()
+        for state in last_two_states:
+            data = state.data_as_dict()
+            combined_keys |= set(k for k in data.keys() if data[k])
+        combined_keys = sorted(combined_keys)
+
+        if older_state:
+            older_date_found = older_state.date_found
+        else:
+            older_date_found = ''
+
+        recent_history = {
+            'newer_date_found': newer_state.date_found,
+            'older_date_found': older_date_found,
+            'rest': []
+        }
+
+        for key in combined_keys:
+            current_value = newer_state.data_as_dict().get(key, '')
+            if older_state:
+                older_value = older_state.data_as_dict().get(key, '')
+            else:
+                older_value = ''
+
+            recent_history['rest'].append(
+                {
+                    'attribute': key,
+                    'newer': current_value,
+                    'older': older_value
+                }
+            )
+
+        return recent_history
+
 
 class ItemState(models.Model):
     class Meta:

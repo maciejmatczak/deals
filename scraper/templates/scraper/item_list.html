@@ -42,17 +42,17 @@
           <table style="display: inline-table; vertical-align:top;" class="table table-borderless table-sm table-hover table-fit">
             <tr>
               <th scope="row">Date found</th>
-              <td>{{ item_data.recent_history.current_date_found|date:'Y-m-d H:i' }}</td>
+              <td>{{ item_data.recent_history.newer_date_found|date:'Y-m-d H:i' }}</td>
               <td>{{ item_data.recent_history.older_date_found|date:'Y-m-d H:i' }}</td>
             </tr>
             {% for data in item_data.recent_history.rest %}
               <tr>
                 <th scope="row">{{ data.attribute }}</th>
-                <td>{% if data.attribute == "date_found" %}{{ data.current|date:'Y-m-d H:i' }}{% else %}{{ data.current }}{% endif %}</td>
-                {% if data.current == data.old %}
+                <td>{{ data.newer }}</td>
+                {% if data.newer == data.older %}
                 <td></td>
                 {% else %}
-                <td style="text-decoration: line-through;">{% if data.attribute == "date_found" %}{{ data.old|date:'Y-m-d H:i' }}{% else %}{{ data.old }}{% endif %}</td>
+                <td style="text-decoration: line-through;">{{ data.older }}</td>
                 {% endif %}
               </tr>
             {% endfor %}

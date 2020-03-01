@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
@@ -10,7 +12,7 @@
   <style type="text/css">
   </style>    
 </head>
-<body style="margin:0; padding:0; background-color:#F2F2F2;">
+<body style="margin:0; padding:0; background-color:#F2F2F2; font-size: 2em;">
   <center>
     <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#F2F2F2">
       <tr>
@@ -25,12 +27,36 @@
       </tr>
       <tr>
         <td align="center" valign="top">
-          {{item.identifier}}
+          {{item.identifier}}</br>
         </td>
       </tr>
       <tr>
         <td align="center" valign="top">
-          <img src="{{site_url}}{{item.image.url}}" width="" height="" style="margin:0; padding:0; border:none; display:block;" border="0" alt="{{item.identifier}}" /> 
+          <table>
+            <tr>
+              <th scope="row">Date found</th>
+              <td>{{ recent_history.newer_date_found|date:'Y-m-d H:i' }}</td>
+              <td>{{ recent_history.older_date_found|date:'Y-m-d H:i' }}</td>
+            </tr>
+            {% for data in recent_history.rest %}
+              <tr>
+                <th scope="row">{{ data.attribute }}</th>
+                <td>{{ data.newer }}</td>
+                {% if data.newer == data.older %}
+                <td></td>
+                {% else %}
+                <td style="text-decoration: line-through;">{{ data.older }}</td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" valign="top">
+          <img src="{{site_url}}{{item.get_absolute_image_url}}" width="" height="" \
+            style="margin:0; padding:0; border:none; display:block;" border="0"\
+            alt="{{item.identifier}}" /> 
         </td>
       </tr>
       <tr>
