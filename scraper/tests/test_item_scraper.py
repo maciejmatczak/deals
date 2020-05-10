@@ -65,9 +65,10 @@ def test_scrap(live_server):
         endless_page=False)
 
     assert data
-    assert len(data) == 8, page_source
+    assert len(data) == 12, page_source
 
-    item = data[1]
+    # first 3 are randomized
+    item = data[3]
     assert item['image'].endswith('/static/generic.jpg')
     assert 'Super' in item['title']
     assert '99' in item['description']

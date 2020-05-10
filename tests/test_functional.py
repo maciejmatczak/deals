@@ -111,7 +111,7 @@ def test_working_with_tasks(live_server, browser, user_factory,
 
     browser.find_element_by_partial_link_text("Tasks").click()
     found_titles = {el.text for el in browser.find_elements_by_css_selector(
-        '.entry-title a')}
+        '.entry-title')}
     expected_titles = {t.title for t in (task1, task2)}
 
     assert found_titles == expected_titles
