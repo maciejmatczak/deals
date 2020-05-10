@@ -19,11 +19,13 @@ from random import random
 
 from .item_scraper import item_scraper
 from .item_scraper.validators import ValidationError as ScrapTaskValidationError
-from .forms import ScrapingJobForm
+from .forms import ScrapingJobForm, ScrapingJobSimpleFormSet
 from .models import ScrapingJob, ScrapingTask, Item
 
 
 def test_site(request):
+    from copy import copy
+
     deals_init = [
         {
             'title': 'Szorty kąpielowe',
@@ -50,10 +52,14 @@ def test_site(request):
     deals = []
     for d in deals_init:
         deals.append(d)
-        d['title'] = d['title'] + ' - 2'
-        deals.append(d)
-        d['title'] = d['title'] + ' - 3'
-        deals.append(d)
+
+        d_tmp = copy(d)
+        d_tmp['title'] = d['title'] + ' - 2'
+        deals.append(d_tmp)
+
+        d_tmp = copy(d)
+        d_tmp['title'] = d_tmp['title'] + ' - 3'
+        deals.append(d_tmp)
 
     context = {
         'deals': deals
@@ -190,6 +196,12 @@ class Diff(NamedTuple):
 
 @login_required
 def job_table(request):
+    if request.method == 'POST':
+        formset = ScrapingJobSimpleFormSet(request.POST)
+
+        if formset.is_valid():
+            formset.save()
+
     user = request.user
 
     all_jobs = ScrapingJob.objects.filter(user=user).order_by('url')
@@ -198,10 +210,13 @@ def job_table(request):
     page = request.GET.get('page')
     jobs = paginator.get_page(page)
 
+    jobs_query = all_jobs.filter(id__in=[j.id for j in jobs])
+    formset = ScrapingJobSimpleFormSet(queryset=jobs_query)
+
     context = {
         'is_paginated': True,
         'page_obj': jobs,
-        'jobs': jobs,
+        'formset': formset
     }
 
     return render(request, 'scraper/scrapingjob_table.html', context=context)

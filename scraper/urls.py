@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (job_table, ScrapingJobListView, ScrapingJobDetailView,
+from .views import (job_table, ScrapingJobDetailView,
                     ScrapingJobCreateView, ScrapingJobUpdateView,
                     ScrapingJobDeleteView, scraping_job_test_run, test_site,
                     ScrapingTaskListView, ScrapingTaskDetailView,

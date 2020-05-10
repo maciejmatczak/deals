@@ -1,5 +1,5 @@
 from django import forms
-from django.db import models
+from django.forms.models import modelformset_factory
 
 from .models import ScrapingJob, ScrapingTask
 
@@ -26,3 +26,17 @@ class ScrapingJobForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['scraping_task'].queryset = \
             ScrapingTask.objects.filter(user=self.current_user)
+
+
+ScrapingJobSimpleFormSet = modelformset_factory(
+    ScrapingJob,
+    fields=[
+        'active',
+        'mail_me'
+    ],
+    extra=0,
+    widgets={
+        'active': forms.CheckboxInput(attrs={'onchange': 'submit();'}),
+        'mail_me': forms.CheckboxInput(attrs={'onchange': 'submit();'}),
+    }
+)
